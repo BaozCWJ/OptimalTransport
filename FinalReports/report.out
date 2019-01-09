@@ -1,0 +1,6 @@
+\BOOKMARK [1][-]{section.1}{Introduction to Optimal Transport}{}% 1
+\BOOKMARK [1][-]{section.2}{Problem Statement}{}% 2
+\BOOKMARK [1][-]{section.3}{Algorithms}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{ADMM for Primal Problem}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{ADMM for Dual Problem}{section.3}% 5
+\BOOKMARK [2][-]{subsection.3.3}{Sinkhorn Method with Entropy Regularization}{section.3}% 6
