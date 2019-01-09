@@ -97,6 +97,7 @@ The idea of the entropic regularization of optimal transport is to use $-\mathbf
 \mathrm { L } _ { \mathrm { C } } ^ { \varepsilon } ( \mathbf { a } , \mathbf { b } ) \stackrel { \mathrm { def } } { = } \min _ { \mathbf { P } \in \mathbf { U } ( \mathbf { a } , \mathbf { b } ) } \langle \mathbf { P } , \mathbf { C } \rangle - \varepsilon \mathbf { H } ( \mathbf { P } )
 \label{sinkhorn target}
 \end{equation}
+(Actually, this can be interpreted as $\text{KL}(\mathbf{P}||\mathbf{K})$)
 
 One can show that the solution to \ref{sinkhorn target} has the form of 
 \begin{equation}
