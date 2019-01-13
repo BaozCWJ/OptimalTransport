@@ -10,8 +10,10 @@ m = n*n
 
 def Read_Image_Pair_from_DOTmark(n, ImageClass):
     path = os.getcwd()
-    index = np.random.choice(range(1, 10), 2, replace=None)
+    # index = np.random.choice(range(1, 10), 2, replace=None)
+    index = [1, 2]
     print(index)
+
     w = []
     for i in index:
         with open(path + '/dataset/' + ImageClass + '/data32_100' + str(i) + '.csv') as csvfile:
@@ -30,9 +32,15 @@ def EuclidCost(m, p):
     C = np.zeros((m, m))
     for i in range(m):
         for j in range(i+1, m):
-            C[i, j] = (i / m - j / m) ** p + (i % m - j % m) ** p
+            C[i, j] = (i // m - j // m) ** p + (i % m - j % m) ** p
     return C + C.T
 
+def EuclidCostv2(m, p):
+    C = np.zeros((m, m))
+    for i in range(m):
+        for j in range(i+1, m):
+            C[i, j] = (i - j) ** p
+    return C + C.T
 
 def Random_Cost(m):
     # m = n*n
