@@ -3,11 +3,10 @@ from dataset import *
 from scipy.sparse.linalg import cg
 
 parser = argparse.ArgumentParser()
-# 记得补上default值
+
 parser.add_argument('--image-class', type=str, default='Shapes')
 parser.add_argument('--n', type=int, default=32)
-parser.add_argument('--p', type=float, default=2.)
-parser.add_argument('--cost', type=str, choices=['euclid', 'euclidv2', 'random'], default='euclid')
+parser.add_argument('--data', type=str, choices=['DOTmark', 'random', 'Caffa', 'ellip'], default='Caffa')
 parser.add_argument('--iters', type=int, default=100)
 parser.add_argument('--eps', type=float, default=1)
 parser.add_argument('--eps-iters', type=int, default=1)
@@ -71,12 +70,20 @@ def Sinkhorn_Newton_Dual(c, a, b, iters, eps, eps_iters):
 
 
 if __name__ == '__main__':
-    mu, nu = Read_Image_Pair_from_DOTmark(args.n, args.image_class)
-    if args.cost == 'euclid':
-        c = EuclidCost(args.n ** 2, args.p)
-    elif args.cost == 'euclidv2':
-        c = EuclidCostv2(args.n ** 2, args.p)
-    elif args.cost == 'random':
+    if args.data == 'DOTmark':
+        mu, nu = DOTmark_Weight(args.n, args.image_class)
+        c = DOTmark_Cost(0, 1, 0, 1, args.n)
+    elif args.data == 'random':
+        mu = Random_Weight(args.n ** 2)
+        nu = Random_Weight(args.n ** 2)
         c = Random_Cost(args.n ** 2)
+    elif args.data == 'Caffa':
+        mu = Const_Weight(args.n ** 2)
+        nu = Const_Weight(args.n ** 2)
+        c = Caffarelli_Cost(args.n ** 2, 0, 0, 1, 2)
+    elif args.data == 'ellip':
+        mu = Const_Weight(args.n ** 2)
+        nu = Const_Weight(args.n ** 2)
+        c = ellipse_Cost(args.n ** 2, 0, 0, 0.5, 2, 0.1)
 
     Sinkhorn_Newton_Dual(c, mu, nu, iters=args.iters, eps=args.eps, eps_iters=args.eps_iters)

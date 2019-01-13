@@ -2,14 +2,12 @@ import argparse
 from dataset import *
 from gurobipy import *
 
-
 parser = argparse.ArgumentParser()
 # 记得补上default值
 parser.add_argument('--image-class', type=str, default='ClassicImages')
 parser.add_argument('--n', type=int, default=32)
-parser.add_argument('--data', type=str, choices=['DOTmark','random','Caffa','ellip'], default='Caffa')
+parser.add_argument('--data', type=str, choices=['DOTmark', 'random', 'Caffa', 'ellip'], default='Caffa')
 args = parser.parse_args()
-
 
 
 def gurobi_set_model(mu, nu, c, M):
@@ -26,7 +24,7 @@ def gurobi_set_model(mu, nu, c, M):
     return pi
 
 
-def solve_gurobi(mu, nu, c,mtd=-1):
+def solve_gurobi(mu, nu, c, mtd=-1):
     m, n = c.shape
     M = Model("OT")
 
@@ -45,19 +43,21 @@ def solve_gurobi(mu, nu, c,mtd=-1):
 
 
 def solve_gurobi_primal_simplex(mu, nu, c):
-    return solve_gurobi(mu, nu, c,mtd=0)
+    return solve_gurobi(mu, nu, c, mtd=0)
+
 
 def solve_gurobi_dual_simplex(mu, nu, c):
-    return solve_gurobi(mu, nu, c,mtd=1)
+    return solve_gurobi(mu, nu, c, mtd=1)
+
 
 def solve_gurobi_barrier(mu, nu, c):
-    return solve_gurobi(mu, nu, c,mtd=2)
+    return solve_gurobi(mu, nu, c, mtd=2)
 
 
 if __name__ == '__main__':
     if args.data == 'DOTmark':
         mu, nu = DOTmark_Weight(args.n, args.image_class)
-        c = DOTmark_Cost(0,1,0,1,args.n)
+        c = DOTmark_Cost(0, 1, 0, 1, args.n)
     elif args.data == 'random':
         mu = Random_Weight(args.n ** 2)
         nu = Random_Weight(args.n ** 2)
@@ -65,9 +65,9 @@ if __name__ == '__main__':
     elif args.data == 'Caffa':
         mu = Const_Weight(args.n ** 2)
         nu = Const_Weight(args.n ** 2)
-        c = Caffarelli_Cost(args.n ** 2,0,0,1,2)
-    elif args.data=='ellip':
+        c = Caffarelli_Cost(args.n ** 2, 0, 0, 1, 2)
+    elif args.data == 'ellip':
         mu = Const_Weight(args.n ** 2)
         nu = Const_Weight(args.n ** 2)
-        c = ellipse_Cost(args.n ** 2,0,0,0.5,2,0.1)
-    solve_gurobi_primal_simplex(mu, nu,c)
+        c = ellipse_Cost(args.n ** 2, 0, 0, 0.5, 2, 0.1)
+    solve_gurobi_primal_simplex(mu, nu, c)
