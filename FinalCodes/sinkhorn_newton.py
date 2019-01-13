@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--image-class', type=str, default='Shapes')
 parser.add_argument('--n', type=int, default=32)
 parser.add_argument('--data', type=str, choices=['DOTmark', 'random', 'Caffa', 'ellip'], default='Caffa')
-parser.add_argument('--iters', type=int, default=10)
+parser.add_argument('--iters', type=int, default=100)
 parser.add_argument('--eps', type=float, default=1)
 parser.add_argument('--eps-iters', type=int, default=1)
 
@@ -41,8 +41,8 @@ def Sinkhorn_Newton(c, a, b, iters, eps, eps_iters):
             if (i + 1) % 10 == 0:
                 print('err1=', np.linalg.norm(K.sum(axis=1) - a / m, 1),
                       'err2=', np.linalg.norm(K.sum(axis=0) - b / m, 1),
-                      'real_loss=', (c * K).sum(),
-                      'loss=', (c * K + eps * K * np.log(K)).sum())
+                      'loss=', (c * K).sum(),
+                      'loss with entropy=', (c * K + eps * K * np.log(K)).sum())
 
         eps /= 10
 

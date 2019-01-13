@@ -3,7 +3,7 @@ from dataset import *
 from gurobipy import *
 
 parser = argparse.ArgumentParser()
-# 记得补上default值
+
 parser.add_argument('--image-class', type=str, default='ClassicImages')
 parser.add_argument('--n', type=int, default=32)
 parser.add_argument('--data', type=str, choices=['DOTmark', 'random', 'Caffa', 'ellip'], default='Caffa')

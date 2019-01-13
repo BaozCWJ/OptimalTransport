@@ -27,12 +27,13 @@ def Sinkhorn(c, a, b, iters, eps, eps_iters):
             #    v = b / np.dot(K.T, u)
             #    u = a / np.dot(K, v)
             pi = np.diag(u).dot(K).dot(np.diag(v))
-            if (i) % 100 == 0:
+            if (i+1) % 50 == 0:
                 print('err1=', np.linalg.norm(pi.sum(axis=1) - a, 1),
                       'err2=', np.linalg.norm(pi.sum(axis=0) - b, 1),
-                      'loss=', (c * pi).sum())
+                      'loss=', (c * pi).sum(),
+                      'loss with entropy=', (c * pi + eps * pi * np.log(pi)).sum())
 
-        eps = eps / 10  #
+        eps = eps / 10
 
 
 if __name__ == '__main__':

@@ -76,16 +76,122 @@ A discrete optimal transport problem can be formulated into a linear program as
 \begin{aligned}
 \min_{\pi} & \sum_{i=1}^{m}\sum_{j=1}^{n} c_{ i j } \pi_{ i j }\\
 s.t. & \sum_{j=1}^{n}\pi_{ i j } = \mu_i, \forall i\\
-& \sum_{i=1}^{n}\pi_{ i j } = \nu_j, \forall j \\
+& \sum_{i=1}^{m}\pi_{ i j } = \nu_j, \forall j \\
 & \pi_{ij} \geq 0,
 \end{aligned}
 \end{equation}
 where $c$ stands for the cost and $s$ for the transportation plan, while $\mu$ and $\nu$ are restrictions. Note that we always suppose $ c \geq 0 $, $ \mu \geq 0 $, $ \nu \geq 0 $ and $ \sum_{i=1}^{m}{\mu_i} = \sum_{j=1}^{n}{\nu_j} = 1 $ implicitly. From realistic background, $c$ is always valued the squared Euclidean distanced or some other norms. Note that there are $ m n $ variables in this formulation, and this leads to intensive computation.
 
+In order to decrease the number of variables, we can derive the dual problem of discrete optimal transport.
+\begin{equation} \label{Eq:StdLP_dual}
+  \begin{aligned}
+  \max_{\lambda,\eta} & \sum_{i=1}^{m}\mu_{i}\lambda_{i}+\sum_{j=1}^{n}\nu_{j}\eta_{j}\\
+  s.t. & c_{i j}-\lambda_{i}-\eta_{j}\geq0, \forall i, j
+  \end{aligned}
+\end{equation}
+Although this formulation only has m + n variables, there are still challenges including the recovery of $\pi$ from $\lambda$ and $\eta$ and the great number of constraints.
 \section{Algorithms}
 \subsection{ADMM for Primal Problem}
+We first implement a first order algorithm called \textbf{alternative direction method of multipliers} (ADMM). According to a reformulation of primal problem, 
+\begin{equation} \label{Eq:StdLP_admm_primal}
+  \begin{aligned}
+  \min_{\pi} & \sum_{i=1}^{m}\sum_{j=1}^{n} c_{ i j } \pi_{ i j }+\mathbb{I}_{+}(\hat{\pi})\\
+  s.t. & \sum_{j=1}^{n}\pi_{ i j } = \mu_i, \forall i\\
+  & \sum_{i=1}^{m}\pi_{ i j } = \nu_j, \forall j \\
+  & \pi=\hat{\pi}
+  \end{aligned}
+\end{equation}
+where $\mathbb{I}_{+}$ is indicator of $\mathbb{R}^{m\times n}_{+}$. The augmented Lagrangian can be written as 
+\begin{equation} \label{Eq:admm_primal}
+  \begin{aligned}
+\mathcal{L}_{\rho}(\pi,\hat{\pi},\lambda,\eta,e)=&\sum_{i=1}^{m}\sum_{j=1}^{n} c_{ i j } \pi_{ i j }+\mathbb{I}_{+}(\hat{\pi})\\
+&+\sum_{i=1}^{m}\lambda_{i}\left(\mu_i-\sum_{j=1}^{n}\pi_{ i j }\right)+\sum_{j=1}^{n}\eta_{j}\left(\nu_j-\sum_{i=1}^{m}\pi_{ i j }\right)+\sum_{i=1}^{m}\sum_{j=1}^{n}e_{ij}\left(\pi_{ij}-\hat{\pi}_{ij}\right)\\
+&+\frac{\rho}{2}\sum_{i=1}^{m}\left(\mu_i-\sum_{j=1}^{n}\pi_{ i j }\right)^{2}+\frac{\rho}{2}\sum_{j=1}^{n}\left(\nu_j-\sum_{i=1}^{m}\pi_{ i j }\right)^{2}+\frac{\rho}{2}\sum_{i=1}^{m}\sum_{j=1}^{n}\left(\pi_{ij}-\hat{\pi}_{ij}\right)^{2}
+\end{aligned}
+\end{equation}
+The minimizer of $\hat{\pi}$ can be written easily as
+\begin{equation}
+  argmin_{\hat{\pi}}\mathcal{L}_{\rho}(\pi,\hat{\pi},\lambda,\eta,e)=max\left(\pi+\frac{e}{\rho}, 0\right)
+\end{equation}
+
+For the minimizer of $\pi$, we can derive the following equation:
+\begin{equation}
+  \sum _ { k = 1 } ^ { n } \pi _ { i k } + \sum _ { k = 1 } ^ { m } \pi _ { k j } + \pi_ { i j } = \frac { 1 } { \rho } \left(-e _ { i j } + \lambda _ { i } + \eta _ { j } - c _ { i j } \right) + \mu _ { i } + v _ { j } + \hat{ \pi} _ { i j } \equiv r _ { i j }
+\end{equation}
+It's a linear equation of $\pi_{ij}$ for the given $r_{ij}$,  which can be solved directly.
+\begin{equation}
+\pi_ { i j } = r _ { i j } - \frac { 1 } { n + 1 } \sum _ { k = 1 } ^ { n } \left( r _ { i k } - \frac { 1 } { m + n + 1 } \sum _ { l = 1 } ^ { m } r _ { l k } \right) - \frac { 1 } { m + 1 } \sum _ { k = 1 } ^ { m } \left( r _ { k j } - \frac { 1 } { m + n + 1 } \sum _ { l = 1 } ^ { n } r _ { k l } \right)
+\end{equation}
+
+Then, we can write the explicit form of ADMM algorithm. This algorithm is implemented in \textbf{ADMM$\_$primal.py}.
+
+\begin{algorithm}[H]
+  \SetAlgoNoLine
+  \caption{Alternating direction method of multipliers for the primal problem} 
+  \KwIn{input data $c$, $\mu$, $\nu$, 
+  step size$\alpha$, penalty scalar $\rho$ and maximum iteration $N$} 
+  \KwOut{solution $\pi$} 
+  initializing $k = 0$\\
+  $\pi^{(k)},\hat{\pi}^{(k)},e^{(k)},\lambda^{(k)},\eta^{(k)}:=0$\\
+  \While{ $k<N$} 
+  {  
+   $\pi^{(k+1)}:=argmin_{\pi}\mathcal{L}_{\rho}(\pi,\hat{\pi}^{(k)},\lambda^{(k)},\eta^{(k)},e^{(k)})$\\
+   $\hat{\pi}^{(k+1)}:=argmin_{\hat{\pi}}\mathcal{L}_{\rho}(\pi^{(k+1)},\hat{\pi},\lambda^{(k)},\eta^{(k)},e^{(k)})$\\
+   $\lambda^{(k+1)}:=\lambda^{(k)}+\alpha\rho(\mu-\sum_{j=1}^{n}\pi_{ i j })$\\
+   $\eta^{(k+1)}:=\eta^{(k)}+\alpha\rho(\nu-\sum_{i=1}^{m}\pi_{ i j })$\\
+   $e^{(k+1)}:=e^{(k)}+\alpha\rho(\pi-\hat{\pi})$\\
+   $k:= k+1$
+  }
+  return $\hat{\pi}$
+\end{algorithm}
+
 \subsection{ADMM for Dual Problem}
-\subsection{Sinkhorn Method with Entropy Regularization}
+According the reformulation of dual problem,
+\begin{equation}
+  \begin{aligned}
+    \min_{\lambda,\eta} & -\sum_{i=1}^{m}\mu_{i}\lambda_{i}-\sum_{j=1}^{n}\nu_{j}\eta_{j}+\mathbb{I}_{+}(e)\\
+    s.t. & c_{i j}-\lambda_{i}-\eta_{j}-e_{ij}=0, \forall i, j
+    \end{aligned}
+\end{equation} 
+we can write down the augmented Lagrangian as
+\begin{equation} \label{Eq:admm_dual}
+  \begin{aligned}
+\mathcal{L}_{\rho}(\lambda,\eta,e,d)=&-\sum_{i=1}^{m}\mu_{i}\lambda_{i}-\sum_{j=1}^{n}\nu_{j}\eta_{j}+\mathbb{I}_{+}(e)\\
+&+\sum_{i=1}^{m}\sum_{j=1}^{n}d_{ij}(c_{i j}-\lambda_{i}-\eta_{j}-e_{ij})+\frac{\rho}{2}\sum_{i=1}^{m}\sum_{j=1}^{n}(c_{i j}-\lambda_{i}-\eta_{j}-e_{ij})^{2}
+\end{aligned}
+\end{equation}
+The minimizer of $e$ can be done directly by solving for zero gradient and projection, while
+the minimizer of $\lambda$ and $\eta$ can be done by solving for zero gradient.
+\begin{equation}
+  \begin{aligned}
+    argmin_{e_{ij}}\mathcal{L}_{\rho}(\lambda,\eta,e,d)=& max\left(c_{ij}+\frac{d_{ij}}{\rho}-\lambda_{i}-\eta_{j}, 0\right)\\
+    argmin_{\lambda_{i}}\mathcal{L}_{\rho}(\lambda,\eta,e,d)=& \frac{1}{n}\left((\mu_{i}+\sum_{j=1}^{n}d_{ij})/\rho+\sum_{j=1}^{n}(c_{ij}-\eta_{j}-e_{ij})\right)\\
+    argmin_{\eta_{j}}\mathcal{L}_{\rho}(\lambda,\eta,e,d)=& \frac{1}{m}\left((\nu_{j}+\sum_{i=1}^{m}d_{ij})/\rho+\sum_{i=1}^{m}(c_{ij}-\lambda_{i}-e_{ij})\right)\\
+  \end{aligned}
+\end{equation}
+
+The algorithm is implemented in \textbf{ADMM$\_$dual.py}.
+Solution $\pi$ can be recovered by $\pi=-d$ from KKT conditions.
+
+\begin{algorithm}[H]
+  \SetAlgoNoLine
+  \caption{Alternating direction method of multipliers for the primal problem} 
+  \KwIn{input data $c$, $\mu$, $\nu$, 
+  step size$\alpha$, penalty scalar $\rho$ and maximum iteration $N$} 
+  \KwOut{solution $\pi$} 
+  initializing $k = 0$\\
+  $\lambda^{(k)},\eta^{(k)},e^{(k)},d^{(k)}:=0$\\
+  \While{ $k<N$} 
+  {  
+   $\lambda^{(k+1)}_{i}:=argmin_{\lambda_{i}}\mathcal{L}_{\rho}(\lambda,\eta^{(k)},e^{(k)},d^{(k)})$\\
+   $\eta^{(k+1)}_{j}:=argmin_{\eta_{j}}\mathcal{L}_{\rho}(\lambda^{(k+1)},\eta,e^{(k)},d^{(k)})$\\
+   $e^{(k+1)}_{ij}:=argmin_{e_{ij}}\mathcal{L}_{\rho}(\lambda^{(k+1)},\eta^{(k+1)},e,d^{(k)})$\\
+   $d^{(k+1)}_{ij}:=d^{(k)}_{ij}+\alpha\rho(c_{ij}-\lambda_{i}-\eta_{j}-e_{ij})$\\
+   $k:= k+1$
+  }
+  return $\pi=-d$
+\end{algorithm}
+\subsection{Sinkhorn-Knopp Method}
 The discrete entropy of a coupling matrix is defined as
 \begin{equation}
 \mathbf { H } ( \mathbf { P } ) \stackrel { \mathrm { def } } { = } - \sum _ { i , j } \mathbf { P } _ { i , j } \left( \log \left( \mathbf { P } _ { i , j } \right) - 1 \right)
@@ -128,7 +234,37 @@ or :
 \end{align}
 with $\mathbf { v } ^ { ( 0 ) } = \mathbf { 1 } _ { m }$ and $\mathbf { K } _ { i , j } = e^{-\mathbf{C}_{i,j}/\epsilon}$.
 
-\subsubsection*{Acknowledgments}
+
+\section{Numerical Result and Interpretation}
+\subsection{Description of datasets}
+In order to compare the performance of differnet algorithms, we have to use some classic and challenging datasets.
+
+In general, the $i$-th datapoint can be denoted as $(x_{i},\mu_{i})$ , where $x_{i}\in \mathbb{R}^{d}$ is the position of datapoint and $\mu_{i}$ is the probability at $x_{i}$.
+
+For convenience, we assume that datapoints are followed 2D distribution (i.e. $x_{i}\in \mathbb{R}^{2}$ ). Besides, we use the squared Euclidean distance to define the cost matrix between two datasets $\{(x_{i},\mu_{i})\}_{i=1}^{m}$ and $\{(y_{j},\nu_{j})\}_{j=1}^{n}$ as following
+\begin{equation}
+  c_{ij}=||x_{i}-y_{j}||_{2}^{2}\quad\forall i, j
+\end{equation}
+We have tested our algorithms on four types of datasets
+\begin{itemize}
+  \item Randomly generated dataset\\
+        The position are uniformly sampled from
+        $[0, 1]\times[0, 1]$. The weights $\mu$ and $\nu$ are randomly sampled from $[0, 1]$ and scaled to $ \sum_{i=1}^{m}{\mu_i} = \sum_{j=1}^{n}{\nu_j} = 1 $.
+  \item ellipses [\textbf{Gerber2017}]\\
+  The ellipse example consists of two uniform samples (source and target data set) of size $m=n$ from the unit circle
+  with normal distributed noise added with zero mean and standard deviation 0.1. The source
+  data sample is then scaled in the x-Axis by 0.5 and in the y-Axis by 2, while the target
+  data set is scaled in the x-Axis by 2 and in the y-Axis by 0.5.
+  Besides, the weights are both normalized uniform distributions.
+  \item Caffarelli [\textbf{Gerber2017}]\\
+  Caffarelli’s example consists of two uniform samples (source and target data set) on $[-1, 1]\times[-1, 1]$  of size $m=n$. Any points outside the unit circle are then
+discarded. Additionally, the target data sample is split along the x-Axis at 0 and shifted by
+$+2$ and $-2$ for points with positive and negative x-Axis values, respectively. The weights are both normalized uniform distributions, too.
+  \item DOTmark [\textbf{Schrieber2017}]\\
+  In DOTmark, we always have $m=n=r^{2}$, and $(x_i)_{1\leq i\leq m} = (y_j)_{1\leq j\leq n}$ form a regular square grid of resolution $r\times r$ in $\mathbb{R}^{2}$, which are the natural position of source and target data set. The weights are the brightness distributions with normalization.
+\end{itemize}
+\subsection{Numerical result}
+\subsection*{Acknowledgments}
 
 Use unnumbered third level headings for the acknowledgments. All
 acknowledgments go at the end of the paper. Do not include

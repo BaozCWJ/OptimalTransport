@@ -63,8 +63,8 @@ def Sinkhorn_Newton_Dual(c, a, b, iters, eps, eps_iters):
             if (i+1) % 10 == 0:
                 print('err1=', np.linalg.norm(pi.sum(axis=1) - a/m, 1),
                       'err2=', np.linalg.norm(pi.sum(axis=0) - b/m, 1),
-                      'real_loss=', (c * pi).sum(),
-                      'loss=',  (c * pi + eps * pi * np.log(pi)).sum())
+                      'loss=', (c * pi).sum(),
+                      'loss with entropy=',  (c * pi + eps * pi * np.log(pi)).sum())
 
         eps /= 10
 

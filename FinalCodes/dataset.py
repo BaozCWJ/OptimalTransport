@@ -20,22 +20,6 @@ def Random_Weight(num):
     return v / sum(v)
 
 
-def DOTmark_Weight(num, ImageClass):
-    path = os.getcwd()
-    # index = np.random.choice(range(1, 10), 2, replace=None)
-    index = [1, 2]
-    w = []
-    for i in index:
-        with open(path + '/dataset/' + ImageClass + '/data32_100' + str(i) + '.csv') as csvfile:
-            csv_reader = csv.reader(csvfile)
-            for row in csv_reader:
-                w.append(row)
-        csvfile.close()
-    w = np.array(w, np.float32).reshape((2, num ** 2))
-    v = w[0, :] / sum(w[0, :])
-    u = w[1, :] / sum(w[1, :])
-    return v, u
-
 
 def Euclid_Cost(mu_position, nu_position):
     m, n = mu_position.shape[0], nu_position.shape[0]
@@ -54,6 +38,23 @@ def Random_Cost(m, scalar=1):
     return Euclid_Cost(mu_position, nu_position)
 
 
+def DOTmark_Weight(num, ImageClass):
+    path = os.getcwd()
+    # index = np.random.choice(range(1, 10), 2, replace=None)
+    index = [1, 2]
+    w = []
+    for i in index:
+        with open(path + '/dataset/' + ImageClass + '/data32_100' + str(i) + '.csv') as csvfile:
+            csv_reader = csv.reader(csvfile)
+            for row in csv_reader:
+                w.append(row)
+        csvfile.close()
+    w = np.array(w, np.float32).reshape((2, num ** 2))
+    v = w[0, :] / sum(w[0, :])
+    u = w[1, :] / sum(w[1, :])
+    return v, u
+
+
 def DOTmark_position(start_x, end_x, start_y, end_y, size):
     num = [size, size]
     num_t = num[0] * num[1]
@@ -61,7 +62,7 @@ def DOTmark_position(start_x, end_x, start_y, end_y, size):
     x = np.linspace(start_x + step_x / 2., end_x - step_x / 2., num[0])
     step_y = (end_y - start_y) / num[1]
     y = np.linspace(start_y + step_y / 2., end_y - step_y / 2., num[1])
-    xp, yp = np.meshgrid(x, y)
+    xp, yp = np.meshgrid(x, y)  # make grid
     p = np.concatenate((xp.reshape((num_t, 1)), yp.reshape((num_t, 1))), axis=1)
     return p
 

@@ -24,7 +24,7 @@ def init(m, n):
 
 def update(m, n, mu, nu, c, pi, pi_hat, e, lamda, eta, rho, alpha):
     r = (
-            (e + lamda.reshape((m, 1)) + eta.reshape((1, n)) - c) / rho
+            (-e + lamda.reshape((m, 1)) + eta.reshape((1, n)) - c) / rho
             + mu.reshape((m, 1))
             + nu.reshape((1, n))
             + pi_hat
@@ -35,13 +35,13 @@ def update(m, n, mu, nu, c, pi, pi_hat, e, lamda, eta, rho, alpha):
             - ((r.sum(axis=0) - r.sum() / (m + n + 1)) / (m + 1)).reshape((1, n))
     )
 
-    pi_hat = np.maximum(pi - e / rho, 0.)
+    pi_hat = np.maximum(pi + e / rho, 0.)
 
     lamda = lamda + alpha * rho * (mu - pi.sum(axis=1))
 
     eta = eta + alpha * rho * (nu - pi.sum(axis=0))
 
-    e = e + alpha * rho * (pi_hat - pi)
+    e = e + alpha * rho * (pi - pi_hat)
 
     return pi, pi_hat, e, lamda, eta
 
@@ -76,5 +76,4 @@ if __name__ == '__main__':
         mu = Const_Weight(args.n ** 2)
         nu = Const_Weight(args.n ** 2)
         c = ellipse_Cost(args.n ** 2, 0, 0, 0.5, 2, 0.1)
-
     ADMM_primal(c, mu, nu, args.iters, args.rho, args.alpha)
