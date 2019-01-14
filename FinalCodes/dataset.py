@@ -6,7 +6,7 @@ import os
 '''
 notation:
 each image is n by n
-num = n*n
+num (and m)= n*n
 '''
 
 
@@ -18,7 +18,6 @@ def Random_Weight(num):
     # num = n*n
     v = np.random.random(num)
     return v / sum(v)
-
 
 
 def Euclid_Cost(mu_position, nu_position):
@@ -95,7 +94,7 @@ def Caffarelli_position(num, x_center, y_center, r, d):
 
 
 def Caffarelli_Cost(num, x_center, y_center, r, d):
-    mu_position = Caffarelli_position(num, x_center, y_center, r, 0)
+    mu_position = Caffarelli_position(num, x_center, y_center, r, 0) #
     nu_position = Caffarelli_position(num, x_center, y_center, r, d)
     return Euclid_Cost(mu_position, nu_position)
 

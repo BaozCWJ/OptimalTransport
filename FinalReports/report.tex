@@ -22,6 +22,8 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
+\usepackage[linesnumbered,boxed,ruled,commentsnumbered]{algorithm2e}
+\usepackage{listings}
 
 \title{Large-scale Optimal Transport}
 
@@ -191,7 +193,7 @@ Solution $\pi$ can be recovered by $\pi=-d$ from KKT conditions.
   }
   return $\pi=-d$
 \end{algorithm}
-\subsection{Sinkhorn-Knopp Method}
+\subsection{Add Entropy Regularization: Sinkhorn-Knopp Method }
 The discrete entropy of a coupling matrix is defined as
 \begin{equation}
 \mathbf { H } ( \mathbf { P } ) \stackrel { \mathrm { def } } { = } - \sum _ { i , j } \mathbf { P } _ { i , j } \left( \log \left( \mathbf { P } _ { i , j } \right) - 1 \right)
@@ -218,6 +220,7 @@ take first order gradient and we get
 \begin{align}
 \frac { \partial \mathcal { L } ( \mathbf { P } , \mathbf { f } , \mathbf { g } ) } { \partial \mathbf { P } _ { i , j } } &= \mathbf { C } _ { i , j } + \varepsilon \log \left( \mathbf { P } _ { i , j } \right) - \mathbf { f } _ { i } - \mathbf { g } _ { j } = 0\\
 \Rightarrow\mathbf { P } _ { i , j } &= e ^ { \mathbf { f } _ { i } / \varepsilon } e ^ { - \mathbf { C } _ { i , j } / \varepsilon } e ^ { \mathbf { g } _ { j } / \varepsilon }
+\label{solution for P}
 \end{align}
 Based on the constrain that:
 \begin{align}
@@ -227,12 +230,86 @@ Based on the constrain that:
 or :
 \begin{align}
 \mathbf { u } \odot ( \mathbf { K } \mathbf { v } ) = \mathbf { a } \quad \text { and } \quad \mathbf { v } \odot \left( \mathbf { K } ^ { \mathrm { T } } \mathbf { u } \right) = \mathbf { b }
+\label{solution for marginal}
 \end{align}
 (where $\odot$ means entry-wise multiplication of vectors) we can develop our algorithm as iteratively updating $\mathbf { u }$ and $\mathbf { v }$:
 \begin{align}
 \mathbf { u } ^ { ( \ell + 1 ) }  { = } \frac { \mathbf { a } } { \mathbf { K } \mathbf { v } ^ { ( \ell ) } } \text { and } \mathbf { v } ^ { ( \ell + 1 ) } { = } \frac { \mathbf { b } } { \mathbf { K } ^ { \mathrm { T } } \mathbf { u } ^ { ( \ell + 1 ) } }
 \end{align}
 with $\mathbf { v } ^ { ( 0 ) } = \mathbf { 1 } _ { m }$ and $\mathbf { K } _ { i , j } = e^{-\mathbf{C}_{i,j}/\epsilon}$.
+
+\subsection{Sinkhorn-Newton Method}
+From \ref{solution for P} and \ref{solution for marginal} we can conclude that our target could be reformulated as finding a zero point of
+
+\begin{displaymath}
+F(\mathbf { f },\mathbf { g}) :=
+\left( \begin{array}{c}
+a -  \operatorname { diag } (   e ^ { -\mathbf { f }  / \epsilon } ) \mathbf { K }  e ^ { -\mathbf { g }  / \epsilon } \\
+b -  \operatorname { diag } (   e ^ { -\mathbf { g }  / \epsilon } ) \mathbf { K }  e ^ { -\mathbf { f }  / \epsilon }
+\end{array} \right)
+\end{displaymath}
+where $a,b,\epsilon$ and $\mathbf { K}$ are known.
+What we need to do is to use newton-raphson method to find its zero points:
+\begin{align}
+\left( \begin{array} { l } { \mathbf { f }^ { k + 1 } } \\ { \mathbf { g } ^ { k + 1 } } \end{array} \right) = \left( \begin{array} { l } { \mathbf { f } ^ { k } } \\ { \mathbf { g } ^ { k } } \end{array} \right) - J _ { F } \left( \mathbf { f } ^ { k } , \mathbf { g } ^ { k } \right) ^ { - 1 } F \left( \mathbf { f } ^ { k } , \mathbf { g } ^ { k } \right)
+\end{align}
+where the Jacobian of F is:
+\begin{align}
+J _ { F } ( \mathbf { f }  ,  \mathbf { g } ) = \frac { 1 } { \varepsilon } \left[ \begin{array} { c c } { \operatorname { Diag } \left( \mathbf{P} \mathbf { 1 } _ { m } \right) } & { \mathbf{P} } \\ { \mathbf{P} ^ { \top } } & { \operatorname { Diag } \left( \mathbf{P} ^ { \top } \mathbf { 1 } _ { n } \right) } \end{array} \right]
+\end{align}
+that is, we can use conjugate gradient to solve
+\begin{align}
+J _ { F } \left(  \mathbf {f} ^ { k } ,  \mathbf {g} ^ { k } \right) \left( \begin{array} { c } { \delta  \mathbf {f} } \\ { \delta  \mathbf {g} } \end{array} \right) = - F \left(  \mathbf {f} ^ { k } ,  \mathbf {g} ^ { k } \right)
+\end{align}
+and then update variables by
+\begin{align}
+\begin{aligned}  \mathbf {f} ^ { k + 1 } & =  \mathbf {f} ^ { k } + \delta  \mathbf {f} \\  \mathbf {g} ^ { k + 1 } & =  \mathbf {g} ^ { k } + \delta  \mathbf {g} \end{aligned}
+\end{align}
+Because $ \mathbf {P} ^ { k } : = \operatorname { Diag } \left( \mathrm { e } ^ { -  \mathbf {f} ^ { k } / \varepsilon } \right) \mathbf { K} \operatorname { Diag } \left( \mathrm { e } ^ { -  \mathbf {g} ^ { k } / \varepsilon } \right)$, the update step can be rewrite as
+\begin{align}
+\begin{aligned}  \mathbf {P} ^ { k + 1 } & = \operatorname { Diag } \left( \mathrm { e } ^ { - \left[  \mathbf {f} ^ { k } + \delta  \mathbf {f} \right] / \varepsilon } \right)  \mathbf {K} \operatorname { Diag } \left( \mathrm { e } ^ { - \left[  \mathbf {g} ^ { k } + \delta  \mathbf {g} \right] / \varepsilon } \right) \\ & = \operatorname { Diag } \left( \mathrm { e } ^ { - \delta  \mathbf {f} / \varepsilon } \right)  \mathbf {P} ^ { k } \operatorname { Diag } \left( \mathrm { e } ^ { - \delta  \mathbf {g} / \varepsilon } \right) \end{aligned}
+\end{align}
+
+
+\begin{algorithm}[H]
+  \SetAlgoNoLine
+  \caption{Sinkhorn-Newton method in primal variable} 
+  \KwIn{$\mathbf{a} \in \Sigma _ { n } , \mathbf{b} \in \Sigma _ { m } , \mathbf{C} \in \mathbb { R } ^ { n \times m }$} 
+   initializing $\mathbf{P} ^ { 0 } = \exp ( - \mathbf{C} / \varepsilon ) ,$ set $k = 0$\\
+  \Repeat
+  { some stopping criteria fulfilled }{
+ $\mathbf{a} ^ { k } \gets \mathbf{P} ^ { k } \mathbf{1}_ { m }$\\  
+ $\mathbf{b} ^ { k } \gets \left( \mathbf{P} ^ { k } \right) ^ { \top } \mathbf { 1 } _ { n }$\\
+  compute $\delta \mathbf{f}, \delta \mathbf{g}$: 
+  \quad$\frac { 1 } { \varepsilon } \left[ \begin{array} { c c } { \operatorname { Diag } \left( \mathbf{a} ^ { k } \right) } & { \mathbf{P} ^ { k } } \\ { \left( \mathbf{P} ^ { k } \right) ^ { \top } } & { \operatorname { Diag } \left( \mathbf{b} ^ { k } \right) } \end{array} \right] \left[ \begin{array} { l } { \delta \mathbf{f} } \\ { \delta \mathbf{g} } \end{array} \right] = \left[ \begin{array} { l } { \mathbf{a} ^ { k } - \mathbf{a} } \\ { \mathbf{b} ^ { k } - \mathbf{b} } \end{array} \right]$\\
+$\mathbf{P} ^ { k + 1 } \gets \operatorname { Diag } \left( \mathrm { e } ^ { - \delta \mathbf{f} / \varepsilon } \right) \mathbf{P} ^ { k } \operatorname { Diag } \left( \mathrm { e } ^ { - \delta \mathbf{g} / \varepsilon } \right)$\\
+   $k\gets k+1$
+  }
+  return $\mathbf{P}$
+\end{algorithm}
+
+\subsection{Sinkhorn-Newton for Dual Method}
+
+\begin{algorithm}[H]
+  \SetAlgoNoLine
+  \caption{Sinkhorn-Newton method in dual variable} 
+  \KwIn{$\mathbf{a} \in \Sigma _ { n } , \mathbf{b} \in \Sigma _ { m } , \mathbf{K} \ and\ \mathbf{K} ^ { \top }$} 
+  \KwOut{solution $\mathbf{P}$} 
+  initializing $a ^ { 0 } \in \mathbb { R } ^ { n } , b ^ { 0 } \in \mathbb { R } ^ { m } , \operatorname { set } k = 0$\\
+  \Repeat
+  { some stopping criteria fulfilled }{
+ $a ^ { k }\gets  \mathrm { e } ^ { - f ^ { k } / \varepsilon } \odot K \mathrm { e } ^ { - g ^ { k } / \varepsilon }$\\
+ $b ^ { k } \gets  \mathrm { e } ^ { - g ^ { k } / \varepsilon } \odot K ^ { \top } \mathrm { e } ^ { - f ^ { k } / \varepsilon }$\\
+ Compute updates $\delta f$ and $\delta g$ by solving
+$M \left[ \begin{array} { c } { \delta f } \\ { \delta g } \end{array} \right] = \left[ \begin{array} { c } { a ^ { k } - a } \\ { b ^ { k } - b } \end{array} \right]$\\
+   where the application of $M$ is given by
+$M \left[ \begin{array} { c } { \delta f } \\ { \delta g } \end{array} \right] = \frac { 1 } { \varepsilon } \left[ \begin{array} { c } { a ^ { k } \odot \delta f + \mathrm { e } ^ { - f ^ { k } / \varepsilon } \odot K \left( \mathrm { e } ^ { - g ^ { k } / \varepsilon } \odot \delta g \right) } \\ { b ^ { k } \odot \delta g + e ^ { - g ^ { k } / \varepsilon } \odot K ^ { \top } \left( \mathrm { e } ^ { - f ^ { k } / \varepsilon } \odot \delta f \right) } \end{array} \right]$\\
+$f ^ { k + 1 } \gets f ^ { k } + \delta f$\\
+$g ^ { k + 1 } \gets  g ^ { k } + \delta g$\\
+$k\gets k+1$
+  }
+  return $\mathbf{P}$
+\end{algorithm}
 
 
 \section{Numerical Result and Interpretation}
