@@ -27,6 +27,7 @@
 \usepackage{multirow}
 \usepackage{graphicx}
 \usepackage[justification=centering]{caption}
+\usepackage{float}
 
 \title{Large-scale Optimal Transport}
 
@@ -415,7 +416,7 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \captionsetup{justification=centering}
   \caption{\label{fig:caffa}$m=n=1000$, Caffarelli’s example}
 \end{figure}
-\begin{table}[h]
+\begin{table}[H]
   \centering
   \begin{tabular}{|c|c|}
   \hline
@@ -438,7 +439,7 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
 \end{table}
 
 \subsection{Numerical result}
-\begin{table}[h]
+\begin{table}[H]
   \centering
   \begin{tabular}{|c|c|cccccc|}
     \hline
@@ -468,7 +469,7 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \end{tabular}
   \caption{\label{tab:table1}random}
 \end{table}
-\begin{table}[h!]
+\begin{table}[H]
   \centering
   \begin{tabular}{|c|c|cccccc|}
     \hline
@@ -487,8 +488,8 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \hline
   \multirow{4}*{1024}&dist&2.24&2.11&2.21&2.24&2.18&2.27\\
   ~&time&7.89&70.4&9.73&64.5&21.9&16.6\\  
-  ~&err $\mu$&9.39e-5&1.59e-16&5.37e-10&0&0\\   
-  ~&err $\nu$&9.39e-5&1.48e-16&5.37e-10&0&0\\
+  ~&err $\mu$&9.39e-5&1.59e-16&5.37e-10&0&0&0\\   
+  ~&err $\nu$&9.39e-5&1.48e-16&5.37e-10&0&0&0\\
   \hline
   \multirow{4}*{2048}&dist&2.38&2.23&2.28&2.27&2.22&2.37\\
   ~&time&32.6&4.37e+2&47.9&1.16e+3&8.24e+2&81.9\\  
@@ -498,7 +499,7 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \end{tabular}
   \caption{\label{tab:table1}ellipse}
 \end{table}
-\begin{table}[h!]
+\begin{table}[H]
   \centering
   \begin{tabular}{|c|c|cccccc|}
     \hline
@@ -530,7 +531,7 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
 \end{table}
 Due to the limited time, we
 only tested a randomly chosen pair of images from each class with size $32\times32$, whose corresponding cost matirx is $1024\times1024$.
-\begin{table}[h!]
+\begin{table}[H]
   \centering
   \begin{tabular}{|c|c|cccccc|}
   \hline
@@ -548,9 +549,9 @@ only tested a randomly chosen pair of images from each class with size $32\times
   ~&err $\nu$&9.91e-5&2.58e-9&2.58e-9&2.58e-9&2.58e-9&0\\
   \hline
   \multirow{4}*{3}&dist&3.98e-3&3.98e-3&3.98e-3&3.98e-3&3.98e-3&3.98e-3\\
-  ~&time&5.55&20.4&10.5&13.64&13.2&\\
-  ~&err $\mu$&9.84e-5&1.89e-16&7.38e-14&0&5.70e-10&\\
-  ~&err $\nu$&9.84e-5&5.70e-10&5.70e-10&5.70e-10&0&\\
+  ~&time&5.55&20.4&10.5&13.64&13.2&18.49\\
+  ~&err $\mu$&9.84e-5&1.89e-16&7.38e-14&0&5.70e-10&0\\
+  ~&err $\nu$&9.84e-5&5.70e-10&5.70e-10&5.70e-10&0&0\\
   \hline
   \multirow{4}*{4}&dist&2.09e-2&2.09e-2&2.09e-2&2.09e-2&2.09e-2&2.09e-2\\
   ~&time&5.56&31.8&9.55&13.9&15.9&22.1\\
