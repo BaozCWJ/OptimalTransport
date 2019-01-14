@@ -1,12 +1,15 @@
 import argparse
 from dataset import *
 from gurobipy import *
+import time
 
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--image-class', type=str, default='ClassicImages')
-parser.add_argument('--n', type=int, default=32)
+parser.add_argument('--n', type=float, default=32)
 parser.add_argument('--data', type=str, choices=['DOTmark', 'random', 'Caffa', 'ellip'], default='Caffa')
+parser.add_argument('--method', type=str, choices=['primal', 'dual', 'barrier'], default='primal')
+
 args = parser.parse_args()
 
 
@@ -29,6 +32,7 @@ def solve_gurobi(mu, nu, c, mtd=-1):
     M = Model("OT")
 
     M.setParam(GRB.Param.Method, mtd)
+    M.setParam('OutputFlag', False)  # quiet output
 
     s = gurobi_set_model(mu, nu, c, M)
 
@@ -37,8 +41,8 @@ def solve_gurobi(mu, nu, c, mtd=-1):
     sx = M.getAttr("x", s)
     pi = np.array([sx[i, j] for i in range(m) for j in range(n)]).reshape(m, n)
     print('err1=', np.linalg.norm(pi.sum(axis=1) - mu, 1),
-          'err2=', np.linalg.norm(pi.sum(axis=0) - nu, 1))
-    print('loss=', (c * pi).sum())
+          'err2=', np.linalg.norm(pi.sum(axis=0) - nu, 1),
+          'loss=', (c * pi).sum())
     return pi
 
 
@@ -59,15 +63,24 @@ if __name__ == '__main__':
         mu, nu = DOTmark_Weight(args.n, args.image_class)
         c = DOTmark_Cost(0, 1, 0, 1, args.n)
     elif args.data == 'random':
-        mu = Random_Weight(args.n ** 2)
-        nu = Random_Weight(args.n ** 2)
-        c = Random_Cost(args.n ** 2)
+        mu = Random_Weight(int(args.n ** 2))
+        nu = Random_Weight(int(args.n ** 2))
+        c = Random_Cost(int(args.n ** 2))
     elif args.data == 'Caffa':
-        mu = Const_Weight(args.n ** 2)
-        nu = Const_Weight(args.n ** 2)
-        c = Caffarelli_Cost(args.n ** 2, 0, 0, 1, 2)
+        mu = Const_Weight(int(args.n ** 2))
+        nu = Const_Weight(int(args.n ** 2))
+        c = Caffarelli_Cost(int(args.n ** 2), 0, 0, 1, 2)
     elif args.data == 'ellip':
-        mu = Const_Weight(args.n ** 2)
-        nu = Const_Weight(args.n ** 2)
-        c = ellipse_Cost(args.n ** 2, 0, 0, 0.5, 2, 0.1)
-    solve_gurobi_primal_simplex(mu, nu, c)
+        mu = Const_Weight(int(args.n ** 2))
+        nu = Const_Weight(int(args.n ** 2))
+        c = ellipse_Cost(int(args.n ** 2), 0, 0, 0.5, 2, 0.1)
+
+    start = time.time()
+    if args.method == 'primal':
+        solve_gurobi_primal_simplex(mu, nu, c)
+    elif args.method == 'dual':
+        solve_gurobi_dual_simplex(mu, nu, c)
+    elif args.method == 'barrier':
+        solve_gurobi_barrier(mu, nu, c)
+    t = time.time() - start
+    print('time usage=', t)

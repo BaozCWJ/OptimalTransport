@@ -1,0 +1,360 @@
+random primal 256 mosek
+err1= 1.785940853155045e-05 err2= 1.785940853114642e-05 loss= 0.005449837788825953
+time usage= 0.3426041603088379
+
+random primal 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 9.64939933512099e-18 err2= 1.3580716412553429e-15 loss= 0.008530694297011518
+
+random primal 512 mosek
+err1= 4.3511572567089794e-05 err2= 4.3511572565604606e-05 loss= 0.0028969170274453413
+time usage= 1.3867998123168945
+
+random primal 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.2034644114589099e-17 err2= 1.0408340855860843e-16 loss= 0.003057638301928496
+
+random primal 1024 mosek
+err1= 0.0001041139918776114 err2= 0.0001041139918784412 loss= 0.0017788427119506066
+time usage= 8.110821962356567
+
+random primal 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.1872013788716274e-17 err2= 1.342183844263694e-15 loss= 0.0019763554444478214
+
+random primal 2048 mosek
+err1= 0.0002710687077467931 err2= 0.0002710687077474626 loss= 0.0013544253521194365
+time usage= 35.042312145233154
+
+random primal 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.1316360175317453e-17 err2= 1.3576108553320365e-15 loss= 0.00221370027116199
+
+random dual 256 mosek
+err1= 2.0383000842727483e-17 err2= 2.45029690981724e-16 loss= 0.0072486754293895755
+time usage= 0.3754079341888428
+
+random dual 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.431146867680866e-17 err2= 7.589415207398531e-17 loss= 0.010762703134871337
+
+random dual 512 mosek
+err1= 2.667137344314341e-17 err2= 1.0897587086194926e-16 loss= 0.002876206029378711
+time usage= 1.7004292011260986
+
+random dual 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 2.6454533008646308e-17 err2= 1.4094628242311558e-17 loss= 0.005651452347920383
+
+random dual 1024 mosek
+err1= 1.0909953767224839e-16 err2= 1.9119363210695628e-15 loss= 0.001938497403973249
+time usage= 15.290177822113037
+
+random dual 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.0083080204115191e-17 err2= 1.1985855016827252e-16 loss= 0.003553455684836919
+
+random dual 2048 mosek
+err1= 2.6068561270406205e-16 err2= 1.7939814774502443e-15 loss= 0.0013574636558536096
+time usage= 105.0482120513916
+
+random dual 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.1736488517155585e-17 err2= 4.6485168145316e-17 loss= 0.0009228233403767636
+
+random barrier 256 mosek
+err1= 2.31406469778251e-12 err2= 2.785843807701603e-12 loss= 0.008098151414235073
+time usage= 0.527620792388916
+
+random barrier 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.431146867680866e-17 err2= 8.283304597789254e-17 loss= 0.01029130713484776
+
+random barrier 512 mosek
+err1= 1.298451236735423e-13 err2= 1.0419604022367072e-13 loss= 0.003370718504986734
+time usage= 2.929676055908203
+
+random barrier 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.3010426069826053e-17 err2= 1.4673050101332574e-15 loss= 0.003497741294105998
+
+random barrier 1024 mosek
+err1= 1.379342008213174e-12 err2= 1.2691061720834753e-12 loss= 0.0018878957561260699
+time usage= 15.152525186538696
+
+random barrier 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.834795336497219e-15 err2= 8.61940727125976e-18 loss= 0.002230497373120301
+
+random barrier 2048 mosek
+err1= 1.814333902249843e-12 err2= 2.2692405300521244e-12 loss= 0.0013055561942442713
+time usage= 68.68274116516113
+
+random barrier 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.1519648082658485e-17 err2= 1.6881027825599304e-16 loss= 0.0011133870302334425
+
+Caffa primal 256 mosek
+err1= 1.6738878744391138e-05 err2= 1.6738878744385934e-05 loss= 4.055083695313831
+time usage= 0.2821500301361084
+
+Caffa primal 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 4.063339489316537
+
+Caffa primal 512 mosek
+err1= 4.141147180066482e-05 err2= 4.141147180066265e-05 loss= 3.950691410128541
+time usage= 1.8812718391418457
+
+Caffa primal 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 4.068357523478193
+
+Caffa primal 1024 mosek
+err1= 9.79528935234784e-05 err2= 9.795289352347797e-05 loss= 3.9933373969262127
+time usage= 6.010231256484985
+
+Caffa primal 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.967439700483446
+
+Caffa primal 2048 mosek
+err1= 0.0002541941024153274 err2= 0.0002541941024153281 loss= 3.9723142014453443
+time usage= 27.91119408607483
+
+Caffa primal 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.990088516776912
+
+Caffa dual 256 mosek
+err1= 2.7755575615628914e-17 err2= 2.7755575615628914e-17 loss= 3.905840720659094
+time usage= 0.8796200752258301
+
+Caffa dual 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 4.016102174709623
+
+Caffa dual 512 mosek
+err1= 7.546047120499111e-17 err2= 7.589415207398531e-17 loss= 3.968597588041204
+time usage= 5.370746850967407
+
+Caffa dual 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 4.044734921080033
+
+Caffa dual 1024 mosek
+err1= 1.3986208025063007e-16 err2= 1.3986208025063007e-16 loss= 4.03592746338048
+time usage= 49.8712260723114
+
+Caffa dual 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.954691451932036
+
+Caffa dual 2048 mosek
+err1= 3.951374817623421e-16 err2= 3.955711626313363e-16 loss= 3.989087709512745
+time usage= 492.5345368385315
+
+Caffa dual 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.9778139955239844
+
+Caffa barrier 256 mosek
+err1= 1.977526649377115e-12 err2= 1.9774884854606434e-12 loss= 4.0300598914218
+time usage= 0.6543030738830566
+
+Caffa barrier 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.8995487492736727
+
+Caffa barrier 512 mosek
+err1= 5.789751924417663e-12 err2= 5.789695112223825e-12 loss= 4.04641493136438
+time usage= 3.6027140617370605
+
+Caffa barrier 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.962619380669076
+
+Caffa barrier 1024 mosek
+err1= 8.043517891673235e-12 err2= 8.191450230794761e-12 loss= 4.094289155928488
+time usage= 14.811733961105347
+
+Caffa barrier 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 4.010926985347407
+
+Caffa barrier 2048 mosek
+err1= 2.5320110591531275e-13 err2= 2.4912830045437095e-13 loss= 4.05978544657547
+time usage= 57.958045959472656
+
+Caffa barrier 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.9678638877861703
+
+ellip primal 256 mosek
+err1= 1.7640230541433356e-05 err2= 1.764023054143509e-05 loss= 2.3738580967071505
+time usage= 0.5418341159820557
+
+ellip primal 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.250987496125619
+
+ellip primal 512 mosek
+err1= 4.052816147059185e-05 err2= 4.052816147059619e-05 loss= 2.3590598694100606
+time usage= 1.6452791690826416
+
+ellip primal 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.3646562327026706
+
+ellip primal 1024 mosek
+err1= 9.388703288650555e-05 err2= 9.388703288650208e-05 loss= 2.2374397502929906
+time usage= 7.889353036880493
+
+ellip primal 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.3062056841410925
+
+ellip primal 2048 mosek
+err1= 0.0002419206693333669 err2= 0.00024192066933336495 loss= 2.376399366614361
+time usage= 32.64225935935974
+
+ellip primal 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.2337830255893456
+
+ellip dual 256 mosek
+err1= 9.540979117872439e-18 err2= 9.540979117872439e-18 loss= 2.273888774769671
+time usage= 0.9795470237731934
+
+ellip dual 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.242870435657351
+
+ellip dual 512 mosek
+err1= 2.0383000842727483e-17 err2= 1.951563910473908e-17 loss= 2.388401278483782
+time usage= 5.009190082550049
+
+ellip dual 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.193679592986037
+
+ellip dual 1024 mosek
+err1= 1.5851035761738075e-16 err2= 1.476683358925257e-16 loss= 2.1132820290399326
+time usage= 70.42468118667603
+
+ellip dual 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.1844245056009615
+
+ellip dual 2048 mosek
+err1= 1.2891163830852648e-16 err2= 1.3086320221900039e-16 loss= 2.2294812151013605
+time usage= 436.5687310695648
+
+ellip dual 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.2592945781492735
+
+ellip barrier 256 mosek
+err1= 1.64505822158878e-12 err2= 1.645118069548701e-12 loss= 1.8802677982574265
+time usage= 0.40958118438720703
+
+ellip barrier 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.2230249468936543
+
+ellip barrier 512 mosek
+err1= 2.013397781830406e-11 err2= 2.013400340547533e-11 loss= 2.2367773463296103
+time usage= 1.4912152290344238
+
+ellip barrier 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.28223830783463
+
+ellip barrier 1024 mosek
+err1= 5.366736410741119e-10 err2= 5.36673637170984e-10 loss= 2.208735973088994
+time usage= 9.728801012039185
+
+ellip barrier 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.286154536783365
+
+ellip barrier 2048 mosek
+err1= 1.5185519942201298e-13 err2= 1.399901245272006e-13 loss= 2.2835749856994796
+time usage= 47.94348502159119
+
+ellip barrier 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.2810967078821007
+

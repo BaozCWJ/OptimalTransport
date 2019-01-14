@@ -1,0 +1,359 @@
+DOTmark primal WhiteNoise mosek
+err1= 0.0001018530666603479 err2= 0.00010185425943422705
+loss= 0.0006926231837360473
+time usage= 9.501428842544556
+
+DOTmark primal WhiteNoise gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.192773879665765e-09
+loss= 0.0006926660061178369
+
+DOTmark primal GRFrough mosek
+err1= 9.907405508685471e-05 err2= 9.907147146109591e-05
+loss= 0.0014414694569450342
+time usage= 7.337518215179443
+
+DOTmark primal GRFrough gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.583625757779373e-09
+loss= 0.0014415389534373421
+
+DOTmark primal GRFmoderate mosek
+err1= 9.840603132952396e-05 err2= 9.840660169994354e-05
+loss= 0.0039770998297452426
+time usage= 5.55140495300293
+
+DOTmark primal GRFmoderate gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 5.703704175630264e-10
+loss= 0.003977232259691849
+
+DOTmark primal GRFsmooth mosek
+err1= 9.780259977547901e-05 err2= 9.780383328122478e-05
+loss= 0.02091054948329934
+time usage= 5.5642409324646
+
+DOTmark primal GRFsmooth gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.2335057419932127e-09
+loss= 0.02091053564263357
+
+DOTmark primal LogGRF mosek
+err1= 0.00010010893920519758 err2= 0.00010010735111376241
+loss= 0.018747566253997858
+time usage= 5.991292953491211
+
+DOTmark primal LogGRF gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.5880914361332543e-09
+loss= 0.018746807394342646
+
+DOTmark primal LogitGRF mosek
+err1= 0.00010046569910573258 err2= 0.00010046484332806079
+loss= 0.0165450961686846
+time usage= 6.425203800201416
+
+DOTmark primal LogitGRF gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 8.557776709494647e-10
+loss= 0.016544209755952333
+
+DOTmark primal CauchyDensity mosek
+err1= 0.00010916691105256673 err2= 0.00010916807293204469
+loss= 0.017093484717023145
+time usage= 8.663066148757935
+
+DOTmark primal CauchyDensity gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.1618794815149158e-09
+loss= 0.017091720110972153
+
+DOTmark primal Shapes mosek
+err1= 6.52495761698335e-05 err2= 6.527192791162578e-05
+loss= 0.023829157166164523
+time usage= 5.171900033950806
+
+DOTmark primal Shapes gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.2351741790771484e-08
+loss= 0.023828124666579242
+
+DOTmark primal ClassicImages mosek
+err1= 9.902712785232055e-05 err2= 9.902710602444932e-05
+loss= 0.006123473826608076
+time usage= 5.708732843399048
+
+DOTmark primal ClassicImages gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.1827872842550278e-11
+loss= 0.006123205344486848
+
+DOTmark primal MicroscopyImages mosek
+err1= 7.011552536234503e-05 err2= 7.012146254376439e-05
+loss= 0.010618760968873965
+time usage= 4.2002739906311035
+
+DOTmark primal MicroscopyImages gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 5.9371814131736755e-09
+loss= 0.010618583204859533
+
+DOTmark dual WhiteNoise mosek
+err1= 1.5924219408380846e-16 err2= 1.1927740665009044e-09
+loss= 0.0006926660061178369
+time usage= 10.039492845535278
+
+DOTmark dual WhiteNoise gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.192773879665765e-09
+loss= 0.0006926677036328543
+
+DOTmark dual GRFrough mosek
+err1= 1.1037178115902435e-16 err2= 2.583625857092292e-09
+loss= 0.0014415389534373421
+time usage= 15.650349140167236
+
+DOTmark dual GRFrough gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.583625757779373e-09
+loss= 0.0014415389761449904
+
+DOTmark dual GRFmoderate mosek
+err1= 1.8913906899009625e-16 err2= 5.703705847741065e-10
+loss= 0.003977232259691849
+time usage= 20.361222982406616
+
+DOTmark dual GRFmoderate gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 5.703704175630264e-10 err2= 0.0
+loss= 0.003977232259134846
+
+DOTmark dual GRFsmooth mosek
+err1= 1.6721108005157692e-16 err2= 9.888975346288107e-08
+loss= 0.02091052996827153
+time usage= 31.67585301399231
+
+DOTmark dual GRFsmooth gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.2335057419932127e-09
+loss= 0.020910534291750608
+
+DOTmark dual LogGRF mosek
+err1= 1.5490538539386645e-16 err2= 1.5880915772692721e-09
+loss= 0.018746807394342646
+time usage= 20.423264026641846
+
+DOTmark dual LogGRF gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.5880914361332543e-09 err2= 0.0
+loss= 0.01874680763627845
+
+DOTmark dual LogitGRF mosek
+err1= 1.802486111757151e-16 err2= 8.557778419823574e-10
+loss= 0.016544209755952333
+time usage= 18.14591097831726
+
+DOTmark dual LogitGRF gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 8.557776709494647e-10
+loss= 0.01654420966485881
+
+DOTmark dual CauchyDensity mosek
+err1= 1.1858461261560205e-16 err2= 1.1618796299015357e-09
+loss= 0.01709171839435686
+time usage= 29.71681499481201
+
+DOTmark dual CauchyDensity gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.1618794815149158e-09
+loss= 0.01709171839435686
+
+DOTmark dual Shapes mosek
+err1= 1.1687699419393738e-16 err2= 2.2351741854956253e-08
+loss= 0.023828121981750883
+time usage= 6.835169076919556
+
+DOTmark dual Shapes gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.2351741790771484e-08
+loss= 0.023828125464660843
+
+DOTmark dual ClassicImages mosek
+err1= 1.6059744679941534e-16 err2= 2.1828059759004814e-11
+loss= 0.006123205344486848
+time usage= 17.564035177230835
+
+DOTmark dual ClassicImages gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 2.1827872842550278e-11 err2= 0.0
+loss= 0.006123205345915039
+
+DOTmark dual MicroscopyImages mosek
+err1= 1.1611805267319752e-16 err2= 5.937181526689643e-09
+loss= 0.010618583204859533
+time usage= 7.316500902175903
+
+DOTmark dual MicroscopyImages gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 5.9371814131736755e-09
+loss= 0.010618583296718498
+
+DOTmark barrier WhiteNoise mosek
+err1= 3.3943504262421028e-12 err2= 1.1961963458183556e-09
+loss= 0.0006926677047137172
+time usage= 11.906999826431274
+
+DOTmark barrier WhiteNoise gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.192773879665765e-09
+loss= 0.0006926677304236739
+
+DOTmark barrier GRFrough mosek
+err1= 6.470040089187081e-13 err2= 2.584640558307087e-09
+loss= 0.0014415389535791551
+time usage= 10.317171335220337
+
+DOTmark barrier GRFrough gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 2.583625757779373e-09 err2= 0.0
+loss= 0.0014415389736219184
+
+DOTmark barrier GRFmoderate mosek
+err1= 7.383866132369914e-14 err2= 5.704899011298031e-10
+loss= 0.003977232259702784
+time usage= 10.549195051193237
+
+DOTmark barrier GRFmoderate gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+
+DOTmark barrier GRFsmooth mosek
+err1= 9.801380956711774e-12 err2= 1.2432613686745384e-09
+loss= 0.020910535645570525
+time usage= 9.549134016036987
+
+DOTmark barrier GRFsmooth gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.2335057419932127e-09
+loss= 0.020910534224293263
+
+DOTmark barrier LogGRF mosek
+err1= 2.9251040168331004e-12 err2= 1.5902486700551564e-09
+loss= 0.018746807395158757
+time usage= 10.276896953582764
+
+DOTmark barrier LogGRF gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.5880914361332543e-09
+loss= 0.018746807296637802
+
+DOTmark barrier LogitGRF mosek
+err1= 4.2017592533950143e-10 err2= 1.2751456026523347e-09
+loss= 0.016544209873351964
+time usage= 13.692142009735107
+
+DOTmark barrier LogitGRF gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 8.557776709494647e-10
+loss= 0.016544209688258982
+
+DOTmark barrier CauchyDensity mosek
+err1= 4.0930397898119987e-10 err2= 1.571183529236651e-09
+loss= 0.01709172021283646
+time usage= 12.531779050827026
+
+DOTmark barrier CauchyDensity gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.1618794815149158e-09
+loss= 0.017091720092817786
+
+DOTmark barrier Shapes mosek
+err1= 4.722851894723573e-11 err2= 2.2482580214525615e-08
+loss= 0.023828121991219652
+time usage= 6.327968120574951
+
+DOTmark barrier Shapes gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.2351741790771484e-08
+loss= 0.023828123785278876
+
+DOTmark barrier ClassicImages mosek
+err1= 9.082067509071784e-13 err2= 2.2629873154414795e-11
+loss= 0.006123205344718185
+time usage= 12.93673825263977
+
+DOTmark barrier ClassicImages gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.1827872842550278e-11
+loss= 0.0061232053423765365
+
+DOTmark barrier MicroscopyImages mosek
+err1= 2.4006479421544158e-11 err2= 5.950396947743131e-09
+loss= 0.010618583338221535
+time usage= 5.996561288833618
+
+DOTmark barrier MicroscopyImages gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 5.9371814131736755e-09 err2= 0.0
+loss= 0.010618583349810251
+
+random primal 256 mosek

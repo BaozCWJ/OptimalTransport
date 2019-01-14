@@ -1,0 +1,460 @@
+DOTmark primal WhiteNoise gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.192773879665765e-09 loss= 0.0006926660061178369
+time usage= 15.613656759262085
+
+DOTmark primal GRFrough gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.583625757779373e-09 loss= 0.0014415389534373421
+time usage= 14.40349793434143
+
+DOTmark primal GRFmoderate gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 5.703704175630264e-10 loss= 0.003977232259691849
+time usage= 13.643398761749268
+
+DOTmark primal GRFsmooth gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.2335057419932127e-09 loss= 0.02091053564263357
+time usage= 13.881357908248901
+
+DOTmark primal LogGRF gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.5880914361332543e-09 loss= 0.018746807394342646
+time usage= 14.190043926239014
+
+DOTmark primal LogitGRF gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 8.557776709494647e-10 loss= 0.016544209755952333
+time usage= 14.393797159194946
+
+DOTmark primal CauchyDensity gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.1618794815149158e-09 loss= 0.017091720110972153
+time usage= 13.350934982299805
+
+DOTmark primal Shapes gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.2351741790771484e-08 loss= 0.023828124666579242
+time usage= 13.304908037185669
+
+DOTmark primal ClassicImages gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.1827872842550278e-11 loss= 0.006123205344486848
+time usage= 15.129082202911377
+
+DOTmark primal MicroscopyImages gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 5.9371814131736755e-09 loss= 0.010618583204859533
+time usage= 12.847986936569214
+
+DOTmark dual WhiteNoise gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.192773879665765e-09 loss= 0.0006926677036328543
+time usage= 11.302089929580688
+
+DOTmark dual GRFrough gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.583625757779373e-09 loss= 0.0014415389761449904
+time usage= 14.376837730407715
+
+DOTmark dual GRFmoderate gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 5.703704175630264e-10 err2= 0.0 loss= 0.003977232259134846
+time usage= 13.2154381275177
+
+DOTmark dual GRFsmooth gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.2335057419932127e-09 loss= 0.020910534291750608
+time usage= 15.858494997024536
+
+DOTmark dual LogGRF gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.5880914361332543e-09 err2= 0.0 loss= 0.01874680763627845
+time usage= 16.11305809020996
+
+DOTmark dual LogitGRF gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 8.557776709494647e-10 loss= 0.01654420966485881
+time usage= 16.839282035827637
+
+DOTmark dual CauchyDensity gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.1618794815149158e-09 loss= 0.01709171839435686
+time usage= 18.043230056762695
+
+DOTmark dual Shapes gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.2351741790771484e-08 loss= 0.023828125464660843
+time usage= 12.21343994140625
+
+DOTmark dual ClassicImages gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 2.1827872842550278e-11 err2= 0.0 loss= 0.006123205345915039
+time usage= 13.18268609046936
+
+DOTmark dual MicroscopyImages gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 5.9371814131736755e-09 loss= 0.010618583296718498
+time usage= 13.91077184677124
+
+DOTmark barrier WhiteNoise gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.192773879665765e-09 loss= 0.0006926677304236739
+time usage= 173.15048098564148
+
+DOTmark barrier GRFrough gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 2.583625757779373e-09 err2= 0.0 loss= 0.0014415389736219184
+time usage= 26.474390029907227
+
+DOTmark barrier GRFmoderate gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+
+DOTmark barrier GRFsmooth gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.2335057419932127e-09 loss= 0.020910534224293263
+time usage= 22.09697699546814
+
+DOTmark barrier LogGRF gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.5880914361332543e-09 loss= 0.018746807296637802
+time usage= 29.432860851287842
+
+DOTmark barrier LogitGRF gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 8.557776709494647e-10 loss= 0.016544209688258982
+time usage= 19.09806203842163
+
+DOTmark barrier CauchyDensity gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 1.1618794815149158e-09 loss= 0.017091720092817786
+time usage= 26.37824010848999
+
+DOTmark barrier Shapes gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.2351741790771484e-08 loss= 0.023828123785278876
+time usage= 12.205932855606079
+
+DOTmark barrier ClassicImages gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 2.1827872842550278e-11 loss= 0.0061232053423765365
+time usage= 18.36473774909973
+
+DOTmark barrier MicroscopyImages gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 5.9371814131736755e-09 err2= 0.0 loss= 0.010618583349810251
+time usage= 20.8889901638031
+
+random primal 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.3444106938820255e-17 err2= 5.355958732078392e-16 loss= 0.005939295110563986
+time usage= 0.6789660453796387
+
+random primal 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.0787811616230769e-17 err2= 1.7206288477344955e-16 loss= 0.003791499823173844
+time usage= 2.8260979652404785
+
+random primal 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.0137290312739466e-17 err2= 6.488950002325744e-16 loss= 0.0019060220695413955
+time usage= 14.135551929473877
+
+random primal 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 9.405453846311751e-18 err2= 1.272812692916514e-15 loss= 0.00141969769496271
+time usage= 345.93141508102417
+
+random dual 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 9.974659986866641e-18 err2= 3.872770160118222e-16 loss= 0.008617888664334
+time usage= 0.7070138454437256
+
+random dual 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.0907073855204175e-15 err2= 1.2576745200831851e-17 loss= 0.0029105229414331155
+time usage= 3.3971328735351562
+
+random dual 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.1221492485224971e-17 err2= 3.415236843329339e-16 loss= 0.0018000174212221376
+time usage= 14.000005006790161
+
+random dual 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 6.085897844704258e-16 err2= 1.1736488517155585e-17 loss= 0.0014608443850279414
+time usage= 58.416358947753906
+
+random barrier 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 4.336808689942018e-18 err2= 5.048045315092509e-16 loss= 0.00512827067125339
+time usage= 0.8562769889831543
+
+random barrier 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.214306433183765e-17 err2= 7.458014986290971e-16 loss= 0.005520879751972546
+time usage= 4.271342992782593
+
+random barrier 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 1.913942095088661e-15 err2= 9.432558900623889e-18 loss= 0.0018415641246445481
+time usage= 18.703413009643555
+
+random barrier 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 4.951280271198177e-16 err2= 1.1302807648161384e-17 loss= 0.0014895750962414982
+time usage= 88.93694424629211
+
+Caffa primal 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 4.083009074031465
+time usage= 0.6802520751953125
+
+Caffa primal 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 4.10415462823747
+time usage= 3.4963910579681396
+
+Caffa primal 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 4.003761356950012
+time usage= 29.873825788497925
+
+Caffa primal 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.9876738216365957
+time usage= 746.9486830234528
+
+Caffa dual 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.8647787287638806
+time usage= 1.956049919128418
+
+Caffa dual 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.9680011570660496
+time usage= 3.613656997680664
+
+Caffa dual 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.9971085365308303
+time usage= 18.72250485420227
+
+Caffa dual 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.973949725956566
+time usage= 102.0739221572876
+
+Caffa barrier 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 4.1501366372817525
+time usage= 0.7626640796661377
+
+Caffa barrier 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.9583599303790544
+time usage= 4.636861801147461
+
+Caffa barrier 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.9522521811659295
+time usage= 22.8003990650177
+
+Caffa barrier 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 3.995197290372152
+time usage= 101.65010499954224
+
+ellip primal 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.277966140616052
+time usage= 0.656904935836792
+
+ellip primal 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.1484352755923104
+time usage= 4.8693687915802
+
+ellip primal 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.237229312474874
+time usage= 64.52137017250061
+
+ellip primal 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 0
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.269127152424172
+time usage= 1156.1536889076233
+
+ellip dual 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.1177871202531424
+time usage= 1.4941248893737793
+
+ellip dual 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.307998651855808
+time usage= 4.621669292449951
+
+ellip dual 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.183643759844948
+time usage= 21.872541189193726
+
+ellip dual 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 1
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.2164116708759263
+time usage= 824.9646019935608
+
+ellip barrier 256 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.260220544217345
+time usage= 0.7224838733673096
+
+ellip barrier 512 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.3168259884552374
+time usage= 4.010584115982056
+
+ellip barrier 1024 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.2743621541120516
+time usage= 16.630202770233154
+
+ellip barrier 2048 gurobi
+Academic license - for non-commercial use only
+Changed value of parameter Method to 2
+   Prev: -1  Min: -1  Max: 5  Default: -1
+err1= 0.0 err2= 0.0 loss= 2.3657498235818823
+time usage= 81.87723898887634
+

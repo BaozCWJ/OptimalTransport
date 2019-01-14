@@ -1,5 +1,6 @@
 import numpy as np
 from dataset import *
+import time
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -53,16 +54,20 @@ def ADMM_primal(c, mu, nu, iters, rho, alpha):
     while bigrho >= rho:
         for j in range(iters):
             pi, pi_hat, e, lamda, eta = update(m, n, mu, nu, c, pi, pi_hat, e, lamda, eta, bigrho, alpha)
-            if j % 100 == 0:
-                print('err1=', np.linalg.norm(pi_hat.sum(axis=1) - mu, 1),
-                      'err2=', np.linalg.norm(pi_hat.sum(axis=0) - nu, 1),
-                      'loss= ', (c * pi_hat).sum())
+            # if j % 100 == 0:
+            #     print('err1=', np.linalg.norm(pi_hat.sum(axis=1) - mu, 1),
+            #           'err2=', np.linalg.norm(pi_hat.sum(axis=0) - nu, 1),
+            #           'loss= ', (c * pi_hat).sum())
         bigrho = bigrho / 10
+
+    print('err1=', np.linalg.norm(pi_hat.sum(axis=1) - mu, 1),
+          'err2=', np.linalg.norm(pi_hat.sum(axis=0) - nu, 1),
+          'loss=', (c * pi_hat).sum())
 
 
 if __name__ == '__main__':
     if args.data == 'DOTmark':
-        mu, nu = DOTmark_Weight(args.n, args.image_class)
+        mu, nu = DOTmark_Weight(args.n, args.image_class, )
         c = DOTmark_Cost(0, 1, 0, 1, args.n)
     elif args.data == 'random':
         mu = Random_Weight(args.n ** 2)
@@ -76,4 +81,7 @@ if __name__ == '__main__':
         mu = Const_Weight(args.n ** 2)
         nu = Const_Weight(args.n ** 2)
         c = ellipse_Cost(args.n ** 2, 0, 0, 0.5, 2, 0.1)
+
+    start = time.time()
     ADMM_primal(c, mu, nu, args.iters, args.rho, args.alpha)
+    print('time usage=', time.time() - start)

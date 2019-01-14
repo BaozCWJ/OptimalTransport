@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 def Sinkhorn(c, a, b, iters, eps, eps_iters):
     # a,b 是边缘分布
-    m = len(c)  # m= n*n
+    m = len(c)  # m = n*n
     v = np.ones(m)
     for _ in range(eps_iters):
         K = np.exp(- c / eps)

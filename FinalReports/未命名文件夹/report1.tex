@@ -291,28 +291,7 @@ $\mathbf{P} ^ { k + 1 } \gets \operatorname { Diag } \left( \mathrm { e } ^ { - 
   return $\mathbf{P}$
 \end{algorithm}
 
-\subsection{Sinkhorn-Newton for Dual Problem}
-For the dual problem
-\begin{align}
-\mathcal { L } ( \mathbf { P } , \mathbf { f } , \mathbf { g } ) &= \langle \mathbf { P } , \mathbf { C } \rangle - \varepsilon \mathbf { H } ( \mathbf { P } ) - \left\langle \mathbf { f } , \mathbf { P } \mathbf { 1 } _ { n } - \mathbf { a } \right\rangle - \left\langle \mathbf { g } , \mathbf { P } ^ { \mathrm { T } } \mathbf{ 1 } _ { n } - \mathbf { b } \right\rangle\\
-\frac { \partial \mathcal { L } ( \mathbf { P } , \mathbf { f } , \mathbf { g } ) } { \partial \mathbf { P } _ { i , j } } &=0\\
-\Rightarrow\hat{\mathbf { P }} &= e ^ { \mathbf { f }  / \varepsilon } e ^ { - \mathbf { C } / \varepsilon } e ^ { \mathbf { g }/ \varepsilon }\\
-\Rightarrow \mathcal{L}( \hat{\mathbf { P }} , \mathbf { f } , \mathbf { g } ) &= \langle \mathbf { f } , \mathbf { a } \rangle + \langle \mathbf { g } , \mathbf { b } \rangle - \varepsilon \left\langle e ^ { \mathbf { f } / \varepsilon } , \mathbf { K } e ^ { \mathbf { g } / \varepsilon } \right\rangle
-\end{align}
-We only need to solve
-\begin{align}
-\max _ { \mathbf { f } \in \mathbb { R } ^ { n } , \mathbf { g } \in \mathbb { R } ^ { m } } \langle \mathbf { f } , \mathbf { a } \rangle + \langle \mathbf { g } , \mathbf { b } \rangle - \varepsilon \left\langle e ^ { \mathbf { f } / \varepsilon } , \mathbf { K } e ^ { \mathbf { g } / \varepsilon } \right\rangle = Q ( \mathbf { f } , \mathbf { g } )
-\end{align}
-We can calculate its gradient
-\begin{align}
-\begin{aligned} 
-\left. \nabla \right| _ { \mathbf { f } } Q ( \mathbf { f } , \mathbf { g } ) & = \mathbf { a } - e ^ { \mathbf { f } / \varepsilon } \odot \left( \mathbf { K } e ^ { \mathbf { g } / \varepsilon } \right) \\
- \left. \nabla \right| _ { \mathbf { g } } Q ( \mathbf { f } , \mathbf { g } ) & = \mathbf { b } - e ^ { \mathbf { g } / \varepsilon } \odot \left( \mathbf { K } ^ { T } e ^ { \mathbf { f } / \varepsilon } \right) \end{aligned}
- \label{Q_grad}
-\end{align}
-and its Hessian matrix respectively.
- 
-Then we derive the Newton-Raphson algorithm for minimizing $ Q ( \mathbf { f } , \mathbf { g } )$ :
+\subsection{Sinkhorn-Newton for Dual Method}
 
 \begin{algorithm}[H]
   \SetAlgoNoLine
@@ -335,43 +314,6 @@ $k\gets k+1$
   return $\mathbf{P}$
 \end{algorithm}
 
-Or, in \ref{Q_grad} we can set the gradient to 0 straightly
-\begin{align}
-\mathbf { f } ^ { ( \ell + 1 ) } &= \varepsilon \log \mathbf { a } - \varepsilon \log \left( \mathbf { K } e ^ { \mathbf { g } ^ { ( \ell ) } / \varepsilon } \right)\label{f_update}\\
-\mathbf { g } ^ { ( \ell + 1 ) } &= \varepsilon \log \mathbf { b } - \varepsilon \log \left( \mathbf { K } ^ { \mathrm { T } } e ^ { \mathbf { f } ^ { ( \ell + 1 ) } / \varepsilon } \right)
-\label{g_update}
-\end{align}
-for $\ell \ge0$. However, it's actually the same as Sinkhorn-Knopp algorithm based on $( \mathbf { u } , \mathbf { v } ) = \left( e ^ { \mathbf { f } / \varepsilon } , e ^ { \mathbf { g } / \varepsilon } \right)$.
-
-\subsection{Log-domain Sinkhorn}
-We can rewrite the above formula \ref{f_update} and \ref{g_update} as
-\begin{align}
-\begin{aligned} \mathbf { f } ^ { ( \ell + 1 ) } & = \operatorname { Min } _ { \varepsilon } ^ { \mathrm { row } } \left( \mathbf { S } \left( \mathbf { f } ^ { ( \ell ) } , \mathbf { g } ^ { ( \ell ) } \right) \right) - \mathbf { f } ^ { ( \ell ) } + \varepsilon \log ( \mathbf { a } ) \\ \mathbf { g } ^ { ( \ell + 1 ) } & = \operatorname { Min } _ { \varepsilon } ^ { \mathrm { col } } \left( \mathbf { S } \left( \mathbf { f } ^ { ( \ell + 1 ) } , \mathbf { g } ^ { ( \ell ) } \right) \right) - \mathbf { g } ^ { ( \ell ) } + \varepsilon \log ( \mathbf { b } ) \end{aligned}
-\label{log update}
-\end{align}
-where $\mathbf { S } ( \mathbf { f } , \mathbf { g } ) = \left( \mathbf { C } _ { i , j } - \mathbf { f } _ { i } - \mathbf { g } _ { j } \right) _ { i , j }$ and
-\begin{align}
-\begin{aligned} \operatorname { Min } _ { \varepsilon } ^ { \mathrm { row } } ( \mathbf { A } ) &\stackrel { \mathrm { def } } { = } \left( \min _ { \varepsilon } \left( \mathbf { A } _ { i , j } \right) _ { j } \right) _ { i }  \in \mathbb { R } ^ { n } \\ \operatorname { Min } _ { \varepsilon } ^ { \mathrm { col } } ( \mathbf { A } ) &\stackrel { \mathrm { def. } } { = }  \left( \min _ { \varepsilon } \left( \mathbf { A } _ { i , j } \right) _ { i } \right) _ { j } \in \mathbb { R } ^ { m } \end{aligned}
-\end{align}
-and $\min _ { \varepsilon } \mathbf { z } = - \varepsilon \log \sum _ { i } e ^ { - \mathbf { z } _ { i } / \varepsilon }$ for a vector $\mathbf{z}$.
-
-Let's probe into this expression:
-
-First, $\min _ { \varepsilon } \mathbf { z } $ is nothing but a differentiable approximation of $\min$ function. Besides, the above formula \ref{f_update} and \ref{g_update} are just
-\begin{align}
-\left( \mathbf { f } ^ { ( \ell + 1 ) } \right) _ { i } &= \min _ { \varepsilon } \left( \mathbf { C } _ { i j } - \mathbf { g } _ { j } ^ { ( \ell ) } \right) _ { j } + \varepsilon \log \mathbf { a } _ { i }\\
-\left( \mathbf { g } ^ { ( \ell + 1 ) } \right) _ { j } &= \min _ { \varepsilon } \left( \mathbf { C } _ { i j } - \mathbf { f } _ { i } ^ { ( \ell ) } \right) _ { i } + \varepsilon \log \mathbf { b } _ { j }
-\end{align}
-where $\left( \mathbf { C } _ { i j } - \mathbf { g } _ { j } ^ { ( \ell ) } \right) _ { j }$ denotes the soft-minimum of all values of the j-th column of matrix $\left( \mathbf { C } - \mathbf { 1 } _ { n } \left( \mathbf { g } ^ { ( \ell ) } \right) ^ { \top } \right)$. If we define $ \operatorname { Min } _ { \varepsilon } ^ { \mathrm { row } } ( \mathbf { A } ) $ and $ \operatorname { Min } _ { \varepsilon } ^ { \mathrm { col } } ( \mathbf { A } ) $ as above, then we get
-\begin{align}
-\mathbf { f } ^ { ( \ell + 1 ) } &= \operatorname { Min } _ { \varepsilon } ^ { \mathrm { row } } \left( \mathbf { C } - \mathbf { 1 } _ { n } \mathbf { g } ^ { ( \ell ) ^ { \mathrm { T } } } \right) + \varepsilon \log \mathbf { a }\\
-\mathbf { g } ^ { ( \ell + 1 ) } &= \operatorname { Min } _ { \varepsilon } ^ { \mathrm { col } } \left( \mathbf { C } - \mathbf { f } ^ { ( \ell ) } \mathbf { 1 } _ { m } ^ { \mathrm { T } } \right) + \varepsilon \log \mathbf { b }
-\end{align}
-After that we use a little stable trick
-\begin{align}
-\min _ { \varepsilon } \mathbf { z } = \underline { z } - \varepsilon \log \sum _ { i } e ^ { - \left( \mathbf { z } _ { i } - \underline { z } \right) / \varepsilon }
-\end{align}
-where $\underline{z} = \min \mathbf{z}$. Instead of $\underline{z}$, we use former iteration's value $\mathbf { f } ^ { ( \ell ) }$, then we get \ref{log update}.
 
 \section{Numerical Result and Interpretation}
 \subsection{Description of datasets}
@@ -436,7 +378,6 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \end{tabular}
   \caption{\label{tab:table1}The 10 classes in the DOTmark}
 \end{table}
-
 \subsection{Numerical result}
 \begin{table}[h]
   \centering
@@ -468,7 +409,7 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \end{tabular}
   \caption{\label{tab:table1}random}
 \end{table}
-\begin{table}[h!]
+\begin{table}[h]
   \centering
   \begin{tabular}{|c|c|cccccc|}
     \hline
@@ -498,7 +439,7 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \end{tabular}
   \caption{\label{tab:table1}ellipse}
 \end{table}
-\begin{table}[h!]
+\begin{table}[h]
   \centering
   \begin{tabular}{|c|c|cccccc|}
     \hline
@@ -530,7 +471,7 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
 \end{table}
 Due to the limited time, we
 only tested a randomly chosen pair of images from each class with size $32\times32$, whose corresponding cost matirx is $1024\times1024$.
-\begin{table}[h!]
+\begin{table}[h]
   \centering
   \begin{tabular}{|c|c|cccccc|}
   \hline
@@ -590,7 +531,6 @@ only tested a randomly chosen pair of images from each class with size $32\times
   \end{tabular}
   \caption{\label{tab:table1}The 10 classes in the DOTmark}
 \end{table}
-
 \subsection*{Acknowledgments}
 
 Use unnumbered third level headings for the acknowledgments. All

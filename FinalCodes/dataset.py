@@ -43,7 +43,8 @@ def DOTmark_Weight(num, ImageClass):
     index = [1, 2]
     w = []
     for i in index:
-        with open(path + '/dataset/' + ImageClass + '/data32_100' + str(i) + '.csv') as csvfile:
+        with open(path + '/dataset/' + ImageClass + '/data' + str(num)
+                  + '_100' + str(i) + '.csv') as csvfile:
             csv_reader = csv.reader(csvfile)
             for row in csv_reader:
                 w.append(row)
@@ -94,7 +95,7 @@ def Caffarelli_position(num, x_center, y_center, r, d):
 
 
 def Caffarelli_Cost(num, x_center, y_center, r, d):
-    mu_position = Caffarelli_position(num, x_center, y_center, r, 0) #
+    mu_position = Caffarelli_position(num, x_center, y_center, r, 0)
     nu_position = Caffarelli_position(num, x_center, y_center, r, d)
     return Euclid_Cost(mu_position, nu_position)
 

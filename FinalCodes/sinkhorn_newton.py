@@ -27,7 +27,7 @@ def Sinkhorn_Newton(c, a, b, iters, eps, eps_iters):
 
             # 共轭梯度求逆
             y = eps * np.concatenate((a_-a, b_-b))
-            #A = lambda x: np.concatenate((a_*x[:m] + K.dot(x[m:]), K.T.dot(x[:m]) + b_*x[m:]))
+            # A = lambda x: np.concatenate((a_*x[:m] + K.dot(x[m:]), K.T.dot(x[:m]) + b_*x[m:]))
             A = np.vstack((np.hstack((np.diag(a_), K)), np.hstack((K.T, np.diag(b_)))))
             x, info = cg(A, y)
             # scipy的cg报错信息
