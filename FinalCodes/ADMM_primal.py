@@ -5,7 +5,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--image-class', type=str, default='ClassicImages')
-parser.add_argument('--n', type=int, default=32)
+parser.add_argument('--n', type=float, default=32)
 parser.add_argument('--data', type=str, choices=['DOTmark', 'random', 'Caffa', 'ellip'], default='Caffa')
 parser.add_argument('--iters', type=int, default=15000)
 parser.add_argument('--rho', type=float, default=1e3)
@@ -70,17 +70,17 @@ if __name__ == '__main__':
         mu, nu = DOTmark_Weight(args.n, args.image_class, )
         c = DOTmark_Cost(0, 1, 0, 1, args.n)
     elif args.data == 'random':
-        mu = Random_Weight(args.n ** 2)
-        nu = Random_Weight(args.n ** 2)
-        c = Random_Cost(args.n ** 2)
+        mu = Random_Weight(int(args.n ** 2))
+        nu = Random_Weight(int(args.n ** 2))
+        c = Random_Cost(int(args.n ** 2))
     elif args.data == 'Caffa':
-        mu = Const_Weight(args.n ** 2)
-        nu = Const_Weight(args.n ** 2)
-        c = Caffarelli_Cost(args.n ** 2, 0, 0, 1, 2)
+        mu = Const_Weight(int(args.n ** 2))
+        nu = Const_Weight(int(args.n ** 2))
+        c = Caffarelli_Cost(int(args.n ** 2), 0, 0, 1, 2)
     elif args.data == 'ellip':
-        mu = Const_Weight(args.n ** 2)
-        nu = Const_Weight(args.n ** 2)
-        c = ellipse_Cost(args.n ** 2, 0, 0, 0.5, 2, 0.1)
+        mu = Const_Weight(int(args.n ** 2))
+        nu = Const_Weight(int(args.n ** 2))
+        c = ellipse_Cost(int(args.n ** 2), 0, 0, 0.5, 2, 0.1)
 
     start = time.time()
     ADMM_primal(c, mu, nu, args.iters, args.rho, args.alpha)

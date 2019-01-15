@@ -1,5 +1,5 @@
 \documentclass{article}
-
+ \linespread{1.1}
 % if you need to pass options to natbib, use, e.g.:
 % \PassOptionsToPackage{numbers, compress}{natbib}
 % before loading nips
@@ -16,7 +16,7 @@
 \usepackage[linesnumbered,boxed]{algorithm2e}
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
-\usepackage{hyperref}       % hyperlinks
+%\usepackage{hyperref}       % hyperlinks
 \usepackage{url}            % simple URL typesetting
 \usepackage{booktabs}       % professional-quality tables
 \usepackage{amsfonts}       % blackboard math symbols
@@ -28,6 +28,7 @@
 \usepackage{graphicx}
 \usepackage[justification=centering]{caption}
 \usepackage{float}
+\usepackage[colorlinks,linkcolor=green]{hyperref} % for web link
 
 \title{Large-scale Optimal Transport}
 
@@ -67,16 +68,23 @@
   
 \end{abstract}
 
+\begin{large}
 \section{Introduction to Optimal Transport}
+Optimal transport (OT) problems are an important series of problems considering the minimal cost of transportation, receiving increasing attention from the community of applied mathematics. Its history can be date back to 18th century, the time of the French engineer Gaspard Monge or 1920s when mathematicians were trying to figure out a way to move things efficiently during World War I. Sometimes optimal transport can be seen as some kind of network flow problem, aiming to "transport" under some certain conditions. To put it in another way, given two distributions and a cost function, we aim to find a transport method that minimize a certain kind of cost. A specific definition can be seen in \ref{def} and \ref{Eq:StdLP_admm_primal}.
+
+Over nearly 200 years, theory of optimal transport have not made much progress until some big mathematical breakthroughs in the 1980s and 1990s. Since then the field has flourished and optimal transport theory has found applications in PDEs, geometry, statistics, economics and image processing [5]. However, although it is such a prosperous research field, efficient algorithm to numerically solve continuous or discrete optimal transport problems is absent. While there are some existing algorithms [6] [7], there is still vast space for improvement.
+
+In this report, we derive and implement some algorithms for solving a discrete optimal transport problem from a linear programming view. For some of them which is hard for tunning, we make some discussion about the reasons. Our codes can be reached in GitHub: \href{https://github.com/zdhNarsil/OptimalTransport}{https://github.com/zdhNarsil/OptimalTransport} or \href{https://github.com/BaozCWJ/OptimalTransport}{https://github.com/BaozCWJ/OptimalTransport}. 
 
 \section{Problem Statement}
 The standard formulation of optimal transport are derived from couplings. [\textbf{Villani2009}] That is, let $ \left(\mathcal{X}, \mu \right)$ and $\left(\mathcal{Y}, \nu \right)$  be two probability spaces, and a probability distribution $\pi$ on $ \mathcal{X} \times \mathcal{Y} $ is called \emph{coupling} if $ proj_{\mathcal{X}} (\pi) = \mu $ and $ proj_{\mathcal{Y}} (\pi)= \nu $. An optimal transport between $ \left(\mathcal{X}, \mu \right)  $ and $ \left(\mathcal{Y}, \nu \right) $, or an optimal coupling, is a coupling minimize
+
 \begin{equation}
 \int_{ \mathcal{X} \times \mathcal{Y} } c ( x, y)  d \pi ( x, y ) 
+\label{def}
 \end{equation}
 
 Optimal transport problems can be categorized according to the discreteness of $\mu$ and $\nu$. In this report, we only consider discrete optimal tranport problems, where the two distributions are distributions of finite weighted points.
-
 A discrete optimal transport problem can be formulated into a linear program as
 \begin{equation} \label{Eq:StdLP}
 \begin{aligned}
@@ -197,19 +205,24 @@ Solution $\pi$ can be recovered by $\pi=-d$ from KKT conditions.
   }
   return $\pi=-d$
 \end{algorithm}
-\subsection{Add Entropy Regularization: Sinkhorn-Knopp Method }
+\subsection{Add Entropy Regularization: Sinkhorn-Knopp Algorithm}
 The discrete entropy of a coupling matrix is defined as
 \begin{equation}
 \mathbf { H } ( \mathbf { P } ) \stackrel { \mathrm { def } } { = } - \sum _ { i , j } \mathbf { P } _ { i , j } \left( \log \left( \mathbf { P } _ { i , j } \right) - 1 \right)
 \end{equation}
-The function $\mathbf{H}$ is strongly concave.
+The function $\mathbf{H}$ is strongly concave, we can see it by computing its 2-order derivatives:
+\begin{align}
+\frac{\partial ^ { 2 } \mathbf { H } ( P )}{\partial \mathbf{P}_{ij}^2} = - \operatorname { diag } \left( 1 / \mathbf { P } _ { i , j } \right)  
+\end{align}
+Notice that $\mathbf { P } _ { i , j } \leq 1$, it's obvious that $\mathbf { H } ( \mathbf { P } ) $ has a good property of convexity.
 
 The idea of the entropic regularization of optimal transport is to use $-\mathbf{H}$ as a regularizing function to obtain approximate solutions to the original transport problem:
 \begin{equation}
 \mathrm { L } _ { \mathrm { C } } ^ { \varepsilon } ( \mathbf { a } , \mathbf { b } ) \stackrel { \mathrm { def } } { = } \min _ { \mathbf { P } \in \mathbf { U } ( \mathbf { a } , \mathbf { b } ) } \langle \mathbf { P } , \mathbf { C } \rangle - \varepsilon \mathbf { H } ( \mathbf { P } )
 \label{sinkhorn target}
 \end{equation}
-(Actually, this can be interpreted as $\text{KL}(\mathbf{P}||\mathbf{K})$)
+(Actually, this can be interpreted as $\text{KL}(\mathbf{P}||\mathbf{K})$.)
+With strong convexity of $\mathbf { H  ( P )}$ our new target has a global minima.
 
 One can show that the solution to \ref{sinkhorn target} has the form of 
 \begin{equation}
@@ -225,6 +238,11 @@ take first order gradient and we get
 \frac { \partial \mathcal { L } ( \mathbf { P } , \mathbf { f } , \mathbf { g } ) } { \partial \mathbf { P } _ { i , j } } &= \mathbf { C } _ { i , j } + \varepsilon \log \left( \mathbf { P } _ { i , j } \right) - \mathbf { f } _ { i } - \mathbf { g } _ { j } = 0\\
 \Rightarrow\mathbf { P } _ { i , j } &= e ^ { \mathbf { f } _ { i } / \varepsilon } e ^ { - \mathbf { C } _ { i , j } / \varepsilon } e ^ { \mathbf { g } _ { j } / \varepsilon }
 \label{solution for P}
+\end{align}
+Thus we also get
+\begin{align}
+\mathbf{u} &= e^{\mathbf{f}/\epsilon}\\
+\mathbf{v} &= e^{\mathbf{g}/\epsilon}
 \end{align}
 Based on the constrain that:
 \begin{align}
@@ -304,6 +322,13 @@ We only need to solve
 \begin{align}
 \max _ { \mathbf { f } \in \mathbb { R } ^ { n } , \mathbf { g } \in \mathbb { R } ^ { m } } \langle \mathbf { f } , \mathbf { a } \rangle + \langle \mathbf { g } , \mathbf { b } \rangle - \varepsilon \left\langle e ^ { \mathbf { f } / \varepsilon } , \mathbf { K } e ^ { \mathbf { g } / \varepsilon } \right\rangle = Q ( \mathbf { f } , \mathbf { g } )
 \end{align}
+(Notice that this is an approximation of the original Kantorovich dual
+\begin{align}
+\mathrm { L } _ { \mathbf { C } } ( \mathbf { a } , \mathbf { b } ) &= \max _ { ( \mathbf { f } , \mathbf { g } ) \in \mathbf { R } ( \mathbf { a } , \mathbf { b } ) } \langle \mathbf { f } , \mathbf { a } \rangle + \langle \mathbf { g } , \mathbf { b } \rangle\\
+\mathbf { R } ( \mathbf { a } , \mathbf { b } ) &\stackrel { \mathrm { def } } { = } \left\{ ( \mathbf { f } , \mathbf { g } ) \in \mathbb { R } ^ { n } \times \mathbb { R } ^ { m } : \forall ( i , j ) \in \mathbb { Z } [ n ] \times [ m ] , \mathbf { f } \oplus \mathbf { g } \leq \mathbf { C } \right\}
+\end{align}
+)
+
 We can calculate its gradient
 \begin{align}
 \begin{aligned} 
@@ -352,13 +377,13 @@ We can rewrite the above formula \ref{f_update} and \ref{g_update} as
 \end{align}
 where $\mathbf { S } ( \mathbf { f } , \mathbf { g } ) = \left( \mathbf { C } _ { i , j } - \mathbf { f } _ { i } - \mathbf { g } _ { j } \right) _ { i , j }$ and
 \begin{align}
-\begin{aligned} \operatorname { Min } _ { \varepsilon } ^ { \mathrm { row } } ( \mathbf { A } ) &\stackrel { \mathrm { def } } { = } \left( \min _ { \varepsilon } \left( \mathbf { A } _ { i , j } \right) _ { j } \right) _ { i }  \in \mathbb { R } ^ { n } \\ \operatorname { Min } _ { \varepsilon } ^ { \mathrm { col } } ( \mathbf { A } ) &\stackrel { \mathrm { def. } } { = }  \left( \min _ { \varepsilon } \left( \mathbf { A } _ { i , j } \right) _ { i } \right) _ { j } \in \mathbb { R } ^ { m } \end{aligned}
+\begin{aligned} \operatorname { Min } _ { \varepsilon } ^ { \mathrm { row } } ( \mathbf { A } ) &\stackrel { \mathrm { def } } { = } \left( \min _ { \varepsilon } \left( \mathbf { A } _ { i , j } \right) _ { j } \right) _ { i }  \in \mathbb { R } ^ { n } \\ \operatorname { Min } _ { \varepsilon } ^ { \mathrm { col } } ( \mathbf { A } ) &\stackrel { \mathrm { def} } { = }  \left( \min _ { \varepsilon } \left( \mathbf { A } _ { i , j } \right) _ { i } \right) _ { j } \in \mathbb { R } ^ { m } \end{aligned}
 \end{align}
 and $\min _ { \varepsilon } \mathbf { z } = - \varepsilon \log \sum _ { i } e ^ { - \mathbf { z } _ { i } / \varepsilon }$ for a vector $\mathbf{z}$.
 
 Let's probe into this expression:
 
-First, $\min _ { \varepsilon } \mathbf { z } $ is nothing but a differentiable approximation of $\min$ function. Besides, the above formula \ref{f_update} and \ref{g_update} are just
+First, $\min _ { \varepsilon } \mathbf { z } $ is nothing but a differentiable approximation of $\min$ function. When we take $\epsilon \to 0$, we have $ \min _ { \varepsilon } \mathbf { z } = \min \mathbf{z}$. Besides, the above formula \ref{f_update} and \ref{g_update} are just
 \begin{align}
 \left( \mathbf { f } ^ { ( \ell + 1 ) } \right) _ { i } &= \min _ { \varepsilon } \left( \mathbf { C } _ { i j } - \mathbf { g } _ { j } ^ { ( \ell ) } \right) _ { j } + \varepsilon \log \mathbf { a } _ { i }\\
 \left( \mathbf { g } ^ { ( \ell + 1 ) } \right) _ { j } &= \min _ { \varepsilon } \left( \mathbf { C } _ { i j } - \mathbf { f } _ { i } ^ { ( \ell ) } \right) _ { i } + \varepsilon \log \mathbf { b } _ { j }
@@ -373,6 +398,26 @@ After that we use a little stable trick
 \min _ { \varepsilon } \mathbf { z } = \underline { z } - \varepsilon \log \sum _ { i } e ^ { - \left( \mathbf { z } _ { i } - \underline { z } \right) / \varepsilon }
 \end{align}
 where $\underline{z} = \min \mathbf{z}$. Instead of $\underline{z}$, we use former iteration's value $\mathbf { f } ^ { ( \ell ) }$, then we get \ref{log update}.
+
+\subsection{More on Sinkhorn}
+Following [1] [2] [3] [4], the \ref{sinkhorn target} could be think of as a special case of the following convex optimization problem
+\begin{align}
+\min _ { \mathbf { P } } \sum _ { i , j } \mathbf { C } _ { i , j } \mathbf { P } _ { i , j } - \varepsilon \mathbf { H } ( \mathbf { P } ) + \iota _ { \{ \mathbf { a } \} } \left( \mathbf { P } \mathbf { 1 } _ { m } \right) + \iota _ { \{ \mathbf { b } \} } \left( \mathbf { P } ^ { \mathrm { T } } \mathbf { 1 } _ { n } \right)
+\end{align}
+where $\iota _ {  C }$ means the indicator of set $C$, which is
+\begin{align}
+\iota _ { \mathcal { C } } ( x ) = \left\{ \begin{array} { l l } { 0 } & { \text { if } \quad x \in \mathcal { C } } \\ { + \infty } & { \text { otherwise } } \end{array} \right.
+\end{align}
+Under this situation, the Sinkhorn-Knopp iteration can be extended as
+\begin{align}
+\mathbf { u } &\leftarrow \frac { \operatorname { Prox } _ { F } ^ { \mathrm { KL } } ( \mathbf { K } \mathbf { v } ) } { \mathbf { K } \mathbf { v } }\\
+\mathbf { v }& \leftarrow \frac { \operatorname { Prox } _ { G } ^ { \mathbf { K L } } \left( \mathbf { K } ^ { \mathrm { T } } \mathbf { u } \right) } { \mathbf { K } ^ { \mathrm { T } } \mathbf { u } }
+\end{align}
+where the proximal operator for KL divergence is defined as
+\begin{align}
+\quad \operatorname { Prox } _ { F } ^ { \mathbf { K L } } ( \mathbf { u } ) = \underset { \mathbf { u } ^ { \prime } \in \mathbb { R } _ { + } ^ { N } } { \operatorname { argmin } } \mathbf { K } \mathbf { L } \left( \mathbf { u } ^ { \prime } | \mathbf { u } \right) + F \left( \mathbf { u } ^ { \prime } \right), \forall \mathbf { u } \in \mathbb { R } _ { + } ^ { N } 
+\end{align}
+(an extention of normal proximal operator)
 
 \section{Numerical Result and Interpretation}
 \subsection{Description of datasets}
@@ -598,30 +643,23 @@ Use unnumbered third level headings for the acknowledgments. All
 acknowledgments go at the end of the paper. Do not include
 acknowledgments in the anonymized submission, only in the final paper.
 
+\end{large}
+
 \section*{References}
-
-References follow the acknowledgments. Use unnumbered first-level
-heading for the references. Any choice of citation style is acceptable
-as long as you are consistent. It is permissible to reduce the font
-size to \verb+small+ (9 point) when listing the references. {\bf
-  Remember that you can go over 8 pages as long as the subsequent ones contain
-  \emph{only} cited references.}
 \medskip
-
 \small
 
-[1] Alexander, J.A.\ \& Mozer, M.C.\ (1995) Template-based algorithms
-for connectionist rule extraction. In G.\ Tesauro, D.S.\ Touretzky and
-T.K.\ Leen (eds.), {\it Advances in Neural Information Processing
-  Systems 7}, pp.\ 609--616. Cambridge, MA: MIT Press.
+[1] Karlsson, J., \& Ringh, A. (2017). Generalized Sinkhorn iterations for regularizing inverse problems using optimal mass transport. SIAM Journal on Imaging Sciences, 10(4), 1935-1962.
 
-[2] Bower, J.M.\ \& Beeman, D.\ (1995) {\it The Book of GENESIS:
-  Exploring Realistic Neural Models with the GEneral NEural SImulation
-  System.}  New York: TELOS/Springer--Verlag.
+[2] Peyré, G. (2015). Entropic approximation of Wasserstein gradient flows. SIAM Journal on Imaging Sciences, 8(4), 2323-2351.
 
-[3] Hasselmo, M.E., Schnell, E.\ \& Barkai, E.\ (1995) Dynamics of
-learning and recall at excitatory recurrent synapses and cholinergic
-modulation in rat hippocampal region CA3. {\it Journal of
-  Neuroscience} {\bf 15}(7):5249-5262.
+[3] Frogner, C., Zhang, C., Mobahi, H., Araya, M., \& Poggio, T. A. (2015). Learning with a Wasserstein loss. In Advances in Neural Information Processing Systems (pp. 2053-2061).
 
+[4] Chizat, L., Peyré, G., Schmitzer, B., \& Vialard, F. X. (2016). Scaling algorithms for unbalanced transport problems. arXiv preprint arXiv:1607.05816.
+ 
+ [5] L. Ambrosio. Lecture notes on optimal transport problems. In Mathematical Aspects of Evolving Interfaces, volume 1812 of Lecture Notes in Mathematics, pages 1–52. Springer, 2003
+ 
+ [6] Bertsekas, D. P. (1992). Auction algorithms for network flow problems: A tutorial introduction. Computational optimization and applications, 1(1), 7-66.
+ 
+ [7] Schrieber, J., Schuhmacher, D., \& Gottschlich, C. (2017). Dotmark–a benchmark for discrete optimal transport. IEEE Access, 5, 271-282.
 \end{document}

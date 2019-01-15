@@ -39,8 +39,8 @@ def Sinkhorn_Newton(c, a, b, iters, eps, eps_iters):
             K = np.diag(np.exp(-x[:m]/eps)).dot(K).dot(np.diag(np.exp(-x[m:]/eps)))
 
             if (i + 1) % 10 == 0:
-                print('err1=', np.linalg.norm(K.sum(axis=1) - a / m, 1),
-                      'err2=', np.linalg.norm(K.sum(axis=0) - b / m, 1),
+                print('err1=', np.linalg.norm(K.sum(axis=1) - a, 1),
+                      'err2=', np.linalg.norm(K.sum(axis=0) - b, 1),
                       'loss=', (c * K).sum(),
                       'loss with entropy=', (c * K + eps * K * np.log(K)).sum())
 

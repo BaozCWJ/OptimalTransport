@@ -60,9 +60,10 @@ def Sinkhorn_Newton_Dual(c, a, b, iters, eps, eps_iters):
             g += x[m:]
 
             pi = np.diag(np.exp(-f / eps)).dot(K).dot(np.diag(np.exp(-g / eps)))
+            # pi = np.diag(np.exp(f / eps)).dot(K).dot(np.diag(np.exp(g / eps)))
             if (i+1) % 10 == 0:
-                print('err1=', np.linalg.norm(pi.sum(axis=1) - a/m, 1),
-                      'err2=', np.linalg.norm(pi.sum(axis=0) - b/m, 1),
+                print('err1=', np.linalg.norm(pi.sum(axis=1) - a, 1),
+                      'err2=', np.linalg.norm(pi.sum(axis=0) - b, 1),
                       'loss=', (c * pi).sum(),
                       'loss with entropy=',  (c * pi + eps * pi * np.log(pi)).sum())
 

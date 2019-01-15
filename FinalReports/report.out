@@ -3,10 +3,11 @@
 \BOOKMARK [1][-]{section.3}{Algorithms}{}% 3
 \BOOKMARK [2][-]{subsection.3.1}{ADMM for Primal Problem}{section.3}% 4
 \BOOKMARK [2][-]{subsection.3.2}{ADMM for Dual Problem}{section.3}% 5
-\BOOKMARK [2][-]{subsection.3.3}{Add Entropy Regularization: Sinkhorn-Knopp Method }{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.3}{Add Entropy Regularization: Sinkhorn-Knopp Algorithm}{section.3}% 6
 \BOOKMARK [2][-]{subsection.3.4}{Sinkhorn-Newton Method}{section.3}% 7
 \BOOKMARK [2][-]{subsection.3.5}{Sinkhorn-Newton for Dual Problem}{section.3}% 8
 \BOOKMARK [2][-]{subsection.3.6}{Log-domain Sinkhorn}{section.3}% 9
-\BOOKMARK [1][-]{section.4}{Numerical Result and Interpretation}{}% 10
-\BOOKMARK [2][-]{subsection.4.1}{Description of datasets}{section.4}% 11
-\BOOKMARK [2][-]{subsection.4.2}{Numerical result}{section.4}% 12
+\BOOKMARK [2][-]{subsection.3.7}{More on Sinkhorn}{section.3}% 10
+\BOOKMARK [1][-]{section.4}{Numerical Result and Interpretation}{}% 11
+\BOOKMARK [2][-]{subsection.4.1}{Description of datasets}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.2}{Numerical result}{section.4}% 13

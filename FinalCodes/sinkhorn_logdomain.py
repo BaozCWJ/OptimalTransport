@@ -1,7 +1,6 @@
 import argparse
 from dataset import *
-from scipy.sparse.linalg import cg
-from IPython import embed
+import pdb
 
 parser = argparse.ArgumentParser()
 
@@ -42,14 +41,17 @@ def Sinkhorn_Logdomain(c, a, b, iters, eps, eps_iters, is_tunning=False):
         K = np.exp(- c / eps)
         for i in range(iters):
             S = c - f - g.T
+            # pdb.set_trace()
             f = min_row(S, eps) - f.squeeze() + eps * np.log(a)
             f = f.reshape((m, 1))
             S = c - f - g.T
             g = min_col(S, eps) - g.squeeze() + eps * np.log(b)
             g = g.reshape((n, 1))
 
-            pi = np.diag(np.exp(f.squeeze() / eps)).dot(K).dot(np.diag(np.exp(g.squeeze() / eps)))
-            if is_tunning and i % 10 == 0:
+            # pi = np.diag(np.exp(f.squeeze() / eps)).dot(K).dot(np.diag(np.exp(g.squeeze() / eps)))
+            pi = np.diag(np.exp(-f.squeeze() / eps)).dot(K).dot(np.diag(np.exp(-g.squeeze() / eps)))
+
+            if is_tunning and i % 1 == 0:
                 print('err1=', np.linalg.norm(pi.sum(axis=1) - a, 1),
                       'err2=', np.linalg.norm(pi.sum(axis=0) - b, 1),
                       'loss=', (c * pi).sum(),
