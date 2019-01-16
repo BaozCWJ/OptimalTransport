@@ -1,6 +1,7 @@
 import argparse
 import time
 from dataset import *
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
 
@@ -21,21 +22,32 @@ def Sinkhorn(c, a, b, iters, eps, eps_iters, is_tunning):
     v = np.ones(m)
     for _ in range(eps_iters):
         K = np.exp(- c / eps)
-        for i in range(iters):
-            # if i%2==0:
+
+        plt.figure()
+        l = 1
+        for j in range(iters):
             u = a / np.dot(K, v)
             v = b / np.dot(K.T, u)
-            # else:
-            #    v = b / np.dot(K.T, u)
-            #    u = a / np.dot(K, v)
+
             pi = np.diag(u).dot(K).dot(np.diag(v))
-            if is_tunning and (i+1) % 50 == 0:
+            if is_tunning and (j+1) % 300 == 0:
                 print('err1=', np.linalg.norm(pi.sum(axis=1) - a, 1),
                       'err2=', np.linalg.norm(pi.sum(axis=0) - b, 1),
                       'loss=', (c * pi).sum(),
                       'loss with entropy=', (c * pi + eps * pi * np.log(pi)).sum())
 
+                pi_plot = np.zeros_like(pi)
+                for k in range(pi.shape[0]):
+                    pi_plot[k, pi[k, :].argsort()[-20:]] = 1
+
+                plt.subplot(2, 5, l)
+                l += 1
+                plt.imshow(pi_plot)
+                plt.title('iteration=' + str(j+1))
+
         eps = eps / 10
+        plt.show()
+
     print('err1=', np.linalg.norm(pi.sum(axis=1) - a, 1),
           'err2=', np.linalg.norm(pi.sum(axis=0) - b, 1),
           'loss=', (c * pi).sum(),

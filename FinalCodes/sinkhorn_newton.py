@@ -1,7 +1,7 @@
 import argparse
 import time
 from dataset import *
-from scipy.sparse.linalg import cg
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
 
@@ -22,8 +22,10 @@ def Sinkhorn_Newton(c, a, b, iters, eps, eps_iters, is_tunning):
 
     for _ in range(eps_iters):
         K = np.exp(- c / eps)
+        plt.figure()
+        l = 1
 
-        for i in range(iters):
+        for j in range(iters):
             a_ = K.dot(np.ones(m))
             b_ = K.T.dot(np.ones(m))
 
@@ -41,12 +43,22 @@ def Sinkhorn_Newton(c, a, b, iters, eps, eps_iters, is_tunning):
 
             K = np.diag(np.exp(-x[:m] / eps)).dot(K).dot(np.diag(np.exp(-x[m:] / eps)))
 
-            if is_tunning and (i + 1) % 10 == 0:
+            if is_tunning and (j + 1) % 3 == 0:
                 print('err1=', np.linalg.norm(K.sum(axis=1) - a, 1),
                       'err2=', np.linalg.norm(K.sum(axis=0) - b, 1),
                       'loss=', (c * K).sum())
                 # 'loss with entropy=', (c * K + eps * K * np.log(K)).sum())
+                pi_plot = np.zeros_like(K)
+                for k in range(K.shape[0]):
+                    pi_plot[k, K[k, :].argsort()[-20:]] = 1
+
+                plt.subplot(2, 5, l)
+                l += 1
+                plt.imshow(pi_plot)
+                plt.title('iteration=' + str(j + 1))
+
         eps /= 10
+        plt.show()
 
     print('err1=', np.linalg.norm(K.sum(axis=1) - a, 1),
           'err2=', np.linalg.norm(K.sum(axis=0) - b, 1),

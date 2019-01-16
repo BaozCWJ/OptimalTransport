@@ -278,6 +278,15 @@ or :
 with $\mathbf { v } ^ { ( 0 ) } = \mathbf { 1 } _ { m }$ and $\mathbf { K } _ { i , j } = e^{-\mathbf{C}_{i,j}/\epsilon}$.
 
 We remark that with different initial value for $\mathbf { v } ^ { ( 0 ) }$, the final solution for $\mathbf { v } $ and $\mathbf { u } $ would be different, since if we use $\lambda\mathbf { v } ^{(0)}$ to replace $\mathbf { v } $, then we will get  $\mathbf { u }/\lambda $ at every iteration. Even so, our final solution for $\mathbf{P}$ won't change based on the way we calculate it \ref{solution for P}.
+
+The effect of Sinkhorn-Knopp method is remarkable, the output (i.e.  $\mathbf{P}$) evolves to a proper coupling for optimal transport\footnote{figure taken from [13]}:
+\begin{figure}[H] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width= 5in]{sinkhorn} 
+   \caption{the development of $\mathbf{P}$ w.r.t. iteration $\ell$}
+   \label{fig:sinkhorn}
+\end{figure}
+
 \subsection{Sinkhorn-Newton Method [11]}
 If we take $-\mathbf{f}, -\mathbf{g}$ to take place with $\mathbf{f}, \mathbf{g}$ (notice that $\mathbf{f}, \mathbf{g}$ are just multiplier for equality constrain, so changing their sign as a whole won't make any difference), then from \ref{solution for P} and \ref{solution for marginal} we can conclude that our target could be reformulated as finding a zero point of
 
@@ -438,6 +447,9 @@ where the proximal operator for KL divergence is defined as
 (an extention of normal proximal operator)
 
 \section{Numerical Result and Interpretation}
+
+\label{sec: results}
+
 \subsection{Description of datasets}
 In order to compare the performance of differnet algorithms, we have to use some classic and challenging datasets.
 

@@ -2,6 +2,7 @@ import numpy as np
 from dataset import *
 import time
 import argparse
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--image-class', type=str, default='ClassicImages')
@@ -10,6 +11,7 @@ parser.add_argument('--data', type=str, choices=['DOTmark', 'random', 'Caffa', '
 parser.add_argument('--iters', type=int, default=15000)
 parser.add_argument('--rho', type=float, default=1e3)
 parser.add_argument('--alpha', type=float, default=1)
+parser.add_argument('--is-tunning', action="store_true", default=False)
 
 args = parser.parse_args()
 
@@ -47,18 +49,33 @@ def update(m, n, mu, nu, c, pi, pi_hat, e, lamda, eta, rho, alpha):
     return pi, pi_hat, e, lamda, eta
 
 
-def ADMM_primal(c, mu, nu, iters, rho, alpha):
+def ADMM_primal(c, mu, nu, iters, rho, alpha, is_tunning):
     m, n = c.shape
     pi, pi_hat, e, lamda, eta = init(m, n)
     bigrho = rho * 1
     while bigrho >= rho:
+        plt.figure()
+        l = 1
         for j in range(iters):
             pi, pi_hat, e, lamda, eta = update(m, n, mu, nu, c, pi, pi_hat, e, lamda, eta, bigrho, alpha)
-            # if j % 100 == 0:
-            #     print('err1=', np.linalg.norm(pi_hat.sum(axis=1) - mu, 1),
-            #           'err2=', np.linalg.norm(pi_hat.sum(axis=0) - nu, 1),
-            #           'loss= ', (c * pi_hat).sum())
+            if is_tunning and (j+1) % 1500 == 0:
+                print('err1=', np.linalg.norm(pi_hat.sum(axis=1) - mu, 1),
+                      'err2=', np.linalg.norm(pi_hat.sum(axis=0) - nu, 1),
+                      'loss= ', (c * pi_hat).sum())
+
+                pi_plot = np.zeros_like(pi)
+                for k in range(pi.shape[0]):
+                    pi_plot[k, pi[k, :].argsort()[-20:]] = 1
+
+                plt.subplot(2, 5, l)
+                l += 1
+                plt.imshow(pi_plot)
+                plt.title('iteration=' + str(j+1))
+                # plt.show()
+                # plt.close()
+        plt.show()
         bigrho = bigrho / 10
+
 
     print('err1=', np.linalg.norm(pi_hat.sum(axis=1) - mu, 1),
           'err2=', np.linalg.norm(pi_hat.sum(axis=0) - nu, 1),
@@ -83,5 +100,5 @@ if __name__ == '__main__':
         c = ellipse_Cost(int(args.n ** 2), 0, 0, 0.5, 2, 0.1)
 
     start = time.time()
-    ADMM_primal(c, mu, nu, args.iters, args.rho, args.alpha)
+    ADMM_primal(c, mu, nu, args.iters, args.rho, args.alpha, is_tunning=args.is_tunning)
     print('time usage=', time.time() - start)
