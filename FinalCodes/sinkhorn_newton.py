@@ -12,53 +12,49 @@ parser.add_argument('--iters', type=int, default=30)
 parser.add_argument('--eps', type=float, default=4e-4)
 parser.add_argument('--eps-iters', type=int, default=1)
 parser.add_argument('--is-tunning', action="store_true", default=False)
+parser.add_argument('--draw', action="store_true", default=False)
 
 args = parser.parse_args()
 
 
 def Sinkhorn_Newton(c, a, b, iters, eps, eps_iters, is_tunning):
-    # a,b 是边缘分布
-    m, _ = c.shape  # m = n*n
+    m, _ = c.shape
 
     for _ in range(eps_iters):
         K = np.exp(- c / eps)
-        plt.figure()
-        l = 1
+        if args.draw:
+            plt.figure()
+            l = 1
 
         for j in range(iters):
             a_ = K.dot(np.ones(m))
             b_ = K.T.dot(np.ones(m))
 
-            # 共轭梯度求逆
             y = eps * np.concatenate((a_ - a, b_ - b))
-            # A = lambda x: np.concatenate((a_*x[:m] + K.dot(x[m:]), K.T.dot(x[:m]) + b_*x[m:]))
             A = np.vstack((np.hstack((np.diag(a_), K)), np.hstack((K.T, np.diag(b_)))))
             x = np.linalg.solve(A, y)
-            # x, info = cg(A, y)
-            # scipy的cg报错信息
-            # if info > 0:
-            #     print('cg not converge!')
-            # elif info < 0:
-            #     print('illegal input!')
 
             K = np.diag(np.exp(-x[:m] / eps)).dot(K).dot(np.diag(np.exp(-x[m:] / eps)))
 
             if is_tunning and (j + 1) % 3 == 0:
                 print('err1=', np.linalg.norm(K.sum(axis=1) - a, 1),
                       'err2=', np.linalg.norm(K.sum(axis=0) - b, 1),
-                      'loss=', (c * K).sum())
-                # 'loss with entropy=', (c * K + eps * K * np.log(K)).sum())
-                pi_plot = np.zeros_like(K)
-                for k in range(K.shape[0]):
-                    pi_plot[k, K[k, :].argsort()[-20:]] = 1
+                      'loss=', (c * K).sum(),
+                      'loss with entropy=', (c * K + eps * K * np.log(K)).sum())
 
-                plt.subplot(2, 5, l)
-                l += 1
-                plt.imshow(pi_plot)
-                plt.title('iteration=' + str(j + 1))
+                if args.draw:
+                    pi_plot = np.zeros_like(K)
+                    for k in range(K.shape[0]):
+                        pi_plot[k, K[k, :].argsort()[-20:]] = 1
+
+                    plt.subplot(2, 5, l)
+                    l += 1
+                    plt.imshow(pi_plot)
+                    plt.title('iteration=' + str(j + 1))
 
         eps /= 10
-        plt.show()
+        if args.draw:
+            plt.show()
 
     print('err1=', np.linalg.norm(K.sum(axis=1) - a, 1),
           'err2=', np.linalg.norm(K.sum(axis=0) - b, 1),

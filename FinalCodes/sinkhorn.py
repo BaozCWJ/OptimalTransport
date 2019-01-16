@@ -12,19 +12,20 @@ parser.add_argument('--iters', type=int, default=3000)
 parser.add_argument('--eps', type=float, default=4e-4)
 parser.add_argument('--eps-iters', type=int, default=1)
 parser.add_argument('--is-tunning', action="store_true", default=False)
+parser.add_argument('--draw', action="store_true", default=False)
 
 args = parser.parse_args()
 
 
 def Sinkhorn(c, a, b, iters, eps, eps_iters, is_tunning):
-    # a,b 是边缘分布
-    m = len(c)  # m = n*n
+    m = len(c)
     v = np.ones(m)
     for _ in range(eps_iters):
         K = np.exp(- c / eps)
 
-        plt.figure()
-        l = 1
+        if args.draw:
+            plt.figure()
+            l = 1
         for j in range(iters):
             u = a / np.dot(K, v)
             v = b / np.dot(K.T, u)
@@ -35,18 +36,19 @@ def Sinkhorn(c, a, b, iters, eps, eps_iters, is_tunning):
                       'err2=', np.linalg.norm(pi.sum(axis=0) - b, 1),
                       'loss=', (c * pi).sum(),
                       'loss with entropy=', (c * pi + eps * pi * np.log(pi)).sum())
+                if args.draw:
+                    pi_plot = np.zeros_like(pi)
+                    for k in range(pi.shape[0]):
+                        pi_plot[k, pi[k, :].argsort()[-20:]] = 1
 
-                pi_plot = np.zeros_like(pi)
-                for k in range(pi.shape[0]):
-                    pi_plot[k, pi[k, :].argsort()[-20:]] = 1
-
-                plt.subplot(2, 5, l)
-                l += 1
-                plt.imshow(pi_plot)
-                plt.title('iteration=' + str(j+1))
+                    plt.subplot(2, 5, l)
+                    l += 1
+                    plt.imshow(pi_plot)
+                    plt.title('iteration=' + str(j+1))
 
         eps = eps / 10
-        plt.show()
+        if args.draw:
+            plt.show()
 
     print('err1=', np.linalg.norm(pi.sum(axis=1) - a, 1),
           'err2=', np.linalg.norm(pi.sum(axis=0) - b, 1),

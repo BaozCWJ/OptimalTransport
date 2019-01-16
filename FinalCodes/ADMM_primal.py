@@ -12,6 +12,7 @@ parser.add_argument('--iters', type=int, default=15000)
 parser.add_argument('--rho', type=float, default=1e3)
 parser.add_argument('--alpha', type=float, default=1)
 parser.add_argument('--is-tunning', action="store_true", default=False)
+parser.add_argument('--draw', action="store_true", default=False)
 
 args = parser.parse_args()
 
@@ -54,28 +55,27 @@ def ADMM_primal(c, mu, nu, iters, rho, alpha, is_tunning):
     pi, pi_hat, e, lamda, eta = init(m, n)
     bigrho = rho * 1
     while bigrho >= rho:
-        plt.figure()
-        l = 1
+        if args.draw:
+            plt.figure()
+            l = 1
         for j in range(iters):
             pi, pi_hat, e, lamda, eta = update(m, n, mu, nu, c, pi, pi_hat, e, lamda, eta, bigrho, alpha)
             if is_tunning and (j+1) % 1500 == 0:
                 print('err1=', np.linalg.norm(pi_hat.sum(axis=1) - mu, 1),
                       'err2=', np.linalg.norm(pi_hat.sum(axis=0) - nu, 1),
                       'loss= ', (c * pi_hat).sum())
+                if args.draw:
+                    pi_plot = np.zeros_like(pi)
+                    for k in range(pi.shape[0]):
+                        pi_plot[k, pi[k, :].argsort()[-20:]] = 1
 
-                pi_plot = np.zeros_like(pi)
-                for k in range(pi.shape[0]):
-                    pi_plot[k, pi[k, :].argsort()[-20:]] = 1
-
-                plt.subplot(2, 5, l)
-                l += 1
-                plt.imshow(pi_plot)
-                plt.title('iteration=' + str(j+1))
-                # plt.show()
-                # plt.close()
-        plt.show()
+                    plt.subplot(2, 5, l)
+                    l += 1
+                    plt.imshow(pi_plot)
+                    plt.title('iteration=' + str(j+1))
+        if args.draw:
+            plt.show()
         bigrho = bigrho / 10
-
 
     print('err1=', np.linalg.norm(pi_hat.sum(axis=1) - mu, 1),
           'err2=', np.linalg.norm(pi_hat.sum(axis=0) - nu, 1),
@@ -102,3 +102,5 @@ if __name__ == '__main__':
     start = time.time()
     ADMM_primal(c, mu, nu, args.iters, args.rho, args.alpha, is_tunning=args.is_tunning)
     print('time usage=', time.time() - start)
+
+

@@ -66,7 +66,7 @@
 \begin{abstract}
   
 \end{abstract}
-
+\begin{large}
 \section{Introduction to Optimal Transport}
 Optimal transport (OT) problems are an important series of problems considering the minimal cost of transportation, receiving increasing attention from the community of applied mathematics. Its history can be date back to 18th century, the time of the French engineer Gaspard Monge or 1920s when mathematicians were trying to figure out a way to move things efficiently during World War I. Sometimes optimal transport can be seen as some kind of network flow problem, aiming to "transport" under some certain conditions. To put it in another way, given two distributions and a cost function, we aim to find a transport method that minimize a certain kind of cost. A specific definition can be seen in \ref{def} and \ref{Eq:StdLP_admm_primal}.
 
@@ -147,9 +147,9 @@ Then, we can write the explicit form of ADMM algorithm. This algorithm is implem
   {  
    $\pi^{(k+1)}:=argmin_{\pi}\mathcal{L}_{\rho}(\pi,\hat{\pi}^{(k)},\lambda^{(k)},\eta^{(k)},e^{(k)})$\\
    $\hat{\pi}^{(k+1)}:=argmin_{\hat{\pi}}\mathcal{L}_{\rho}(\pi^{(k+1)},\hat{\pi},\lambda^{(k)},\eta^{(k)},e^{(k)})$\\
-   $\lambda^{(k+1)}:=\lambda^{(k)}+\alpha\rho(\mu-\sum_{j=1}^{n}\pi_{ i j })$\\
-   $\eta^{(k+1)}:=\eta^{(k)}+\alpha\rho(\nu-\sum_{i=1}^{m}\pi_{ i j })$\\
-   $e^{(k+1)}:=e^{(k)}+\alpha\rho(\pi-\hat{\pi})$\\
+   $\lambda^{(k+1)}:=\lambda^{(k)}+\alpha\rho(\mu-\sum_{j=1}^{n}\pi_{ i j }^{(k+1)})$\\
+   $\eta^{(k+1)}:=\eta^{(k)}+\alpha\rho(\nu-\sum_{i=1}^{m}\pi_{ i j }^{(k+1)})$\\
+   $e^{(k+1)}:=e^{(k)}+\alpha\rho(\pi^{(k+1)}-\hat{\pi}^{(k+1)})$\\
    $k:= k+1$
   }
   return $\hat{\pi}$
@@ -421,7 +421,7 @@ In order to compare the performance of differnet algorithms, we have to use some
 
 In general, the $i$-th datapoint can be denoted as $(x_{i},\mu_{i})$ , where $x_{i}\in \mathbb{R}^{d}$ is the position of datapoint and $\mu_{i}$ is the probability at $x_{i}$.
 
-For convenience, we assume that datapoints are followed 2D distribution (i.e. $x_{i}\in \mathbb{R}^{2}$ ). Besides, we use the squared Euclidean distance to define the cost matrix between two datasets $\{(x_{i},\mu_{i})\}_{i=1}^{m}$ and $\{(y_{j},\nu_{j})\}_{j=1}^{n}$ as following
+For convenience, we assume that datapoints are followed 2D distribution (i.e. $x_{i}\in \mathbb{R}^{2}$ ). Besides, we use the squared Euclidean distance to define the cost matrix between two datas $\{(x_{i},\mu_{i})\}_{i=1}^{m}$ and $\{(y_{j},\nu_{j})\}_{j=1}^{n}$ as following
 \begin{equation}
   c_{ij}=||x_{i}-y_{j}||_{2}^{2}\quad\forall i, j
 \end{equation}
@@ -480,11 +480,21 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
 \end{table}
 
 \subsection{Numerical result}
+In this section, we will show the performance of different algorithms or solvers for the above mentioned datasets. For convenience, MOSEK and Gurobi are denoted by \textbf{M} and \textbf{G} respectively. Besides, 'prim', 'dual' and 'int' are corresponding to 'primal simplex', 'dual simplex' and 'interior point'.
+
+In order to evaluate the performance of different algorithms and solvers, we mark down some experimental performance indicators. '\textbf{dist}' stands for the Wasserstein distance, which equals $\sum_{i}\sum_{j}c_{ij}\pi_{ij}$ for discrete optimal transport. '\textbf{time}' stands for the using time for solving OT problem. Besides, we set the fixed iterations=15000 for ADMM primal, 3000 for sinkhorn and 30 for sinkhorn-Newton in the whole numerical experiment. What's more, we also took the errors of weight into consideration via 2 indicators '\textbf{err $\mu$}' and '\textbf{err $\nu$}'.
+\begin{equation}
+  \begin{aligned}
+  err \mu=\sum_{i=1}^{m}\left|\sum_{j=1}^{n}\pi_{ i j } - \mu_i \right|\\
+  err \nu=\sum_{j=1}^{n}\left|\sum_{i=1}^{m}\pi_{ i j } - \nu_i \right|
+  \end{aligned}
+\end{equation}
+In order to make a comprehensive comparison between different algorithms and solvers, we had tested 4 different scale, $m=n=256,512,1024,2048$ when used random, ellipse and Caffarelli dataset.
 \begin{table}[H]
   \centering
   \begin{tabular}{|c|c|cccccccc|}
     \hline
-    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM prim&Sinkhorn\\
+    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM primal&Sinkhorn\\
     \hline
     \hline
   \multirow{4}*{256}&dist&5.45e-3&7.25e-3&8.09e-3&5.94e-3&8.62e-3&5.13e-3&5.04e-3&8.64e-3\\
@@ -514,10 +524,10 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \centering
   \begin{tabular}{|c|c|cccccccc|}
     \hline
-    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM prim&Sinkhorn\\
+    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM primal&Sinkhorn\\
     \hline
     \hline
-  \multirow{4}*{256}&dist&2.37&2.27&1.88&2.28&2.12&2.26&2.22&2.41\\
+  \multirow{4}*{256}&dist&2.37&2.27&1.88&2.28&2.12&2.26&2.22&2.419\\
   ~&time&5.42e-1&9.80&4.10&6.57e-1&1.49&7.22e-1&37.5&20.8\\  
   ~&err $\mu$&1.76e-5&9.54e-18&1.65e-12&0&0&0&1.42e-5&6.98e-17\\   
   ~&err $\nu$&1.76e-5&9.54e-18&1.65e-12&0&0&0&1.40e-5&4.54e-16\\
@@ -532,10 +542,10 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   ~&err $\mu$&9.39e-5&1.59e-16&5.37e-10&0&0&0&1.02e-4&1.25e-16\\   
   ~&err $\nu$&9.39e-5&1.48e-16&5.37e-10&0&0&0&1.02e-4&6.47e-16\\
   \hline
-  \multirow{4}*{2048}&dist&2.38&2.23&2.28&2.27&2.22&2.37&2.31&*\\
-  ~&time&32.6&4.37e+2&47.9&1.16e+3&8.24e+2&81.9&7.88e+3&*\\  
-  ~&err $\mu$&2.42e-4&1.29e-16&1.52e-13&0&0&0&4.67e-3&*\\   
-  ~&err $\nu$&2.42e-4&1.31e-16&1.40e-13&0&0&0&4.65e-3&*\\
+  \multirow{4}*{2048}&dist&2.38&2.23&2.28&2.27&2.22&2.37&2.31&2.27\\
+  ~&time&32.6&4.37e+2&47.9&1.16e+3&8.24e+2&81.9&7.88e+3&6.52e+3\\  
+  ~&err $\mu$&2.42e-4&1.29e-16&1.52e-13&0&0&0&4.67e-3&1.21e-15\\   
+  ~&err $\nu$&2.42e-4&1.31e-16&1.40e-13&0&0&0&4.65e-3&1.07e-15\\
   \hline
   \end{tabular}
   \caption{\label{tab:table1}Numerical result of ellipse example}
@@ -544,7 +554,7 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \centering
   \begin{tabular}{|c|c|cccccccc|}
     \hline
-    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM prim&Sinkhorn\\
+    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM primal&Sinkhorn\\
     \hline
     \hline
   \multirow{4}*{256}&dist&4.06&3.91&4.03&4.08&3.86&4.15&4.02&4.24\\
@@ -576,7 +586,7 @@ only tested a randomly chosen pair of images from each class with size $32\times
   \centering
   \begin{tabular}{|c|c|cccccccc|}
   \hline
-  $\#$&&M prim&M dual&M int&G prim&G dual&G int&ADMM prim&Sinkhorn\\
+  $\#$&&M prim&M dual&M int&G prim&G dual&G int&ADMM primal&Sinkhorn\\
   \hline
   \hline
   \multirow{4}*{1}&dist&6.93e-4&6.93e-4&6.93e-4&6.93e-4&6.93e-4&6.93e-4&6.92e-4&6.62e-4\\
@@ -632,13 +642,60 @@ only tested a randomly chosen pair of images from each class with size $32\times
   \end{tabular}
   \caption{\label{tab:table1}Numerical result of 10 classes in the DOTmark}
 \end{table}
+For solvers, it seems that Gurobi may always reach the truly optimal solution, while MOSEK sometimes fails and result in large errors of weight. For MOSEK, the primal simplex method are faster than the interior method and the dual simplex method, but larger errors of weight. For Gurobi, simplex methods are generally faster than interior point methods, because an simplex methods are specified for linear programs. The bad proformance of the dual simplex may result from the huge amount of constraints.
+Gurobi being generally better than MOSEK because of defect of the Python interface of MOSEK.
 
+From the overall numerical results,  we found that all the algorithms converge, but there are still some difference. As a stable and universal algorithm,the performance of ADMM primal is  not completely capable of different problems. ADMM primal needs thousands of iterations to reach optimal value, but errors of weight needs more iterations to reach 1e-4 or fewer. Thus, the using time of ADMM primal is the worst one.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.8\textwidth]{loss1.png}
+  \captionsetup{justification=centering}
+  \caption{\label{fig:loss}$m=n=1000$, solving Caffarelli’s example via ADMM primal}
+\end{figure}
+
+The implementation and thinking of Sinkhorn algorithm are nothing difficult. The number of hyperparameter is only one, $\epsilon$. From the above mentioned theoratical introduction of Sinkhorn, $\epsilon$ stands for the weight of entropy regularization. If $\epsilon$ is extremely large, the entropy term will be the dominant of the problem, which will mislead the original problem to a completely different problem. Thus, the optimal solution of this problem will larger than true optimal value. On the other hand, If $\epsilon$ is extremely small, the entropy term can be ignored and makes no difference in this problem. In particular experiment, when using extremely small $\epsilon$, the algorithm will be unstable and always overflow due to the defect of float point.
+
+All the codes are implemented in Python. 
+\subsection{A discussion of Sinkhorn-Newton algorithm}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|ccc|}
+    \hline
+    $m=n$&&random&ellipse&Caffarelli\\
+    \hline
+    \hline
+  \multirow{4}*{256}&dist&9.70e-3&2.59&4.53\\
+  ~&time&14.4&23.9&11.0\\  
+  ~&err $\mu$&8.82e-15&3.01e-15&2.68e-16\\   
+  ~&err $\nu$&1.47e-14&3.53e-15&3.21e-16\\
+  \hline
+  \multirow{4}*{512}&dist&6.22e-3&2.48&4.23\\
+  ~&time&67.7&95.4&80.5\\  
+  ~&err $\mu$&8.75e-16&6.15e-16&1.43e-15\\   
+  ~&err $\nu$&1.24e-15&7.05e-16&1.53e-15\\
+  \hline
+  \multirow{4}*{1024}&dist&5.4e-3&2.49&4.28\\
+  ~&time&1.69e+2&2.83e+2&2.52e+2\\  
+  ~&err $\mu$&1.72e-14&2.02e-16&1.25e-16\\   
+  ~&err $\nu$&2.15e-14&5.96e-16&6.28e-16\\
+  \hline
+  \multirow{4}*{2048}&dist&4.36e-3&2.50&4.28\\
+  ~&time&1.22e+3&1.18e+3&1.23e+3\\  
+  ~&err $\mu$&1.88e-14&2.23e-16&1.90e-16\\   
+  ~&err $\nu$&2.39e-14&8.64e-16&8.59e-16\\
+  \hline
+  \end{tabular}
+  \caption{\label{tab:table1}Numerical result of Sinkhorn-Newtom algorithm}
+\end{table}
+Comparing with sinkhorn algorithm, we can easily find that the using time of sinkhorn-Newton are longer than sinkhorn at small-scale datasets. Because, sinkhorn-Newton algorithm has an expensive step to solve a linear equation. However, when solving large-scale datasets, the efficieny of sinkhorn-Newton is better than sinkhorn due to fewer iterations. For sinkhorn algorithm, it usually needs hundreds of iterations in order to decrease err $\mu$ , while sinkhorn-Newton algorithm only needs dozens of iterations. Besides, sinkhorn-Newton algorithm has great performance of err $\mu$ and err $\nu$, even better than Gurobi and MOSEK. 
+
+However, sinkhorn-Newton algorithm isn't a stable and universal algorithm. The value of hyperparameter $\epsilon$ is extremely sensitive towards different datasets. From the simplification of algorithm, we can find that $\epsilon$ only makes a difference at the initial step to smooth cost matrix $c$. In this way, if $\epsilon$ is extremely large, the cost matrix will close to zero matrix, which smooths over the characteristics of different cost matrix and results in bigger distance between two datas than Wasserstein distance. On the other hand, if $\epsilon$ is lower than specific critical value, the singularity of cost matrix will be strengthened via exponential function, which results in the Instability of solving linear equation and finally overflowing.
 \subsection*{Acknowledgments}
 
 Use unnumbered third level headings for the acknowledgments. All
 acknowledgments go at the end of the paper. Do not include
 acknowledgments in the anonymized submission, only in the final paper.
-
+\end{large}
 \section*{References}
 \medskip
 \small

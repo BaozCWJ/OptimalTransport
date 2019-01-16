@@ -33,7 +33,7 @@ def my_cg(A, b, x=None):
         r_k_norm = r_kplus1_norm
         if r_kplus1_norm < 1e-5:
             if args.is_tunning:
-                # print('Itr:', i)
+                print('Itr:', i)
                 pass
             break
         p = beta * p - r
@@ -41,8 +41,7 @@ def my_cg(A, b, x=None):
 
 
 def Sinkhorn_Newton_Dual(c, a, b, iters, eps, eps_iters, is_tunning):
-    # a,b 是边缘分布
-    m, _ = c.shape  # m = n*n
+    m, _ = c.shape
 
     f = np.zeros(m)
     g = np.zeros(m)
@@ -53,13 +52,10 @@ def Sinkhorn_Newton_Dual(c, a, b, iters, eps, eps_iters, is_tunning):
             a_ = np.exp(-f / eps) * (K.dot(np.exp(-g / eps)))
             b_ = np.exp(-g / eps) * (K.T.dot(np.exp(-f / eps)))
 
-            # 共轭梯度求逆
             y = eps * np.concatenate((a_ - a, b_ - b))
             A = lambda x: np.concatenate((a_*x[:m] + np.exp(-f/eps)*K.dot(np.exp(-g/eps)*x[m:]),
                              np.exp(-g/eps)*K.T.dot(np.exp(-f/eps)*x[:m]) + b_*x[m:]))
             x = my_cg(A, y)
-            # A = np.vstack((np.hstack((np.diag(a_), K)), np.hstack((K.T, np.diag(b_)))))
-            # x = np.linalg.solve(A, yn)
 
             f += x[:m]
             g += x[m:]

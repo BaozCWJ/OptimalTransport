@@ -81,7 +81,7 @@ Optimal transport (OT) problems are an important series of problems considering 
 
 Over nearly 200 years, theory of optimal transport have not made much progress until some big mathematical breakthroughs in the 1980s and 1990s. Since then the field has flourished and optimal transport theory has found applications in PDEs, geometry, statistics, economics and image processing [5]. However, although it is such a prosperous research field, efficient algorithm to numerically solve continuous or discrete optimal transport problems is absent. While there are some existing algorithms [6] [7], there is still vast space for improvement.
 
-In this report, we derive and implement some algorithms for solving a discrete optimal transport problem from a linear programming view. For some of them which is hard for tunning, we make some discussion about the reasons. Our codes can be reached in GitHub: \href{https://github.com/zdhNarsil/OptimalTransport}{https://github.com/zdhNarsil/OptimalTransport} or \href{https://github.com/BaozCWJ/OptimalTransport}{https://github.com/BaozCWJ/OptimalTransport}. 
+In this report, we derive and implement some algorithms for solving a discrete optimal transport problem from a linear programming view. For some of them which is hard for tunning, we make some discussion about the reasons. Furthermore, we dive into the deep reasons for the good or bad performance of some algorithms. Our codes can be reached in GitHub: \href{https://github.com/zdhNarsil/OptimalTransport}{https://github.com/zdhNarsil/OptimalTransport} or \href{https://github.com/BaozCWJ/OptimalTransport}{https://github.com/BaozCWJ/OptimalTransport}. 
 
 \section{Problem Statement}
 The standard formulation of optimal transport are derived from couplings. [8] That is, let $ \left(\mathcal{X}, \mu \right)$ and $\left(\mathcal{Y}, \nu \right)$  be two probability spaces, and a probability distribution $\pi$ on $ \mathcal{X} \times \mathcal{Y} $ is called \emph{coupling} if $ proj_{\mathcal{X}} (\pi) = \mu $ and $ proj_{\mathcal{Y}} (\pi)= \nu $. An optimal transport between $ \left(\mathcal{X}, \mu \right)  $ and $ \left(\mathcal{Y}, \nu \right) $, or an optimal coupling, is a coupling minimize
@@ -277,7 +277,7 @@ or :
 \end{align}
 with $\mathbf { v } ^ { ( 0 ) } = \mathbf { 1 } _ { m }$ and $\mathbf { K } _ { i , j } = e^{-\mathbf{C}_{i,j}/\epsilon}$.
 
-We remark that with different initial value for $\mathbf { v } ^ { ( 0 ) }$, the final solution for $\mathbf { v } $ and $\mathbf { u } $ would be different, since if we use $\lambda\mathbf { v } ^{(0)}$ to replace $\mathbf { v } $, then we will get  $\mathbf { u }/\lambda $ at every iteration. Even so, our final solution for $\mathbf{P}$ won't change based on the way we calculate it \ref{solution for P}.
+The algorithm is implemented in \textbf{sinkhorn.py}. We remark that with different initial value for $\mathbf { v } ^ { ( 0 ) }$, the final solution for $\mathbf { v } $ and $\mathbf { u } $ would be different, since if we use $\lambda\mathbf { v } ^{(0)}$ to replace $\mathbf { v } $, then we will get  $\mathbf { u }/\lambda $ at every iteration. Even so, our final solution for $\mathbf{P}$ won't change based on the way we calculate it \ref{solution for P}.
 
 The effect of Sinkhorn-Knopp method is remarkable, the output (i.e.  $\mathbf{P}$) evolves to a proper coupling for optimal transport\footnote{figure taken from [13]}:
 \begin{figure}[H] %  figure placement: here, top, bottom, or page
@@ -337,6 +337,8 @@ $\mathbf{P} ^ { k + 1 } \gets \operatorname { Diag } \left( \mathrm { e } ^ { - 
   return $\mathbf{P}$
 \end{algorithm}
 
+The algorithm is implemented in \textbf{sinkhorn\_newton.py}.
+
 \subsection{Sinkhorn-Newton for Dual Problem}
 For the dual problem
 \begin{align}
@@ -387,6 +389,7 @@ $k\gets k+1$
   }
   return $\mathbf{P}$
 \end{algorithm}
+The algorithm is implemented in \textbf{sinkhorn\_newton\_dual.py}.
 
 Or, in \ref{Q_grad} we can set the gradient to 0 straightly
 \begin{align}
@@ -407,6 +410,7 @@ where $\mathbf { S } ( \mathbf { f } , \mathbf { g } ) = \left( \mathbf { C } _ 
 \begin{aligned} \operatorname { Min } _ { \varepsilon } ^ { \mathrm { row } } ( \mathbf { A } ) &\stackrel { \mathrm { def } } { = } \left( \min _ { \varepsilon } \left( \mathbf { A } _ { i , j } \right) _ { j } \right) _ { i }  \in \mathbb { R } ^ { n } \\ \operatorname { Min } _ { \varepsilon } ^ { \mathrm { col } } ( \mathbf { A } ) &\stackrel { \mathrm { def} } { = }  \left( \min _ { \varepsilon } \left( \mathbf { A } _ { i , j } \right) _ { i } \right) _ { j } \in \mathbb { R } ^ { m } \end{aligned}
 \end{align}
 and $\min _ { \varepsilon } \mathbf { z } = - \varepsilon \log \sum _ { i } e ^ { - \mathbf { z } _ { i } / \varepsilon }$ for a vector $\mathbf{z}$.
+We implement this algorithm and name it as \textbf{sinkhorn\_logdomain.py}.
 
 Let's probe into this expression:
 
@@ -447,15 +451,14 @@ where the proximal operator for KL divergence is defined as
 (an extention of normal proximal operator)
 
 \section{Numerical Result and Interpretation}
-
 \label{sec: results}
 
-\subsection{Description of datasets}
+\subsection{Description of Datasets}
 In order to compare the performance of differnet algorithms, we have to use some classic and challenging datasets.
 
 In general, the $i$-th datapoint can be denoted as $(x_{i},\mu_{i})$ , where $x_{i}\in \mathbb{R}^{d}$ is the position of datapoint and $\mu_{i}$ is the probability at $x_{i}$.
 
-For convenience, we assume that datapoints are followed 2D distribution (i.e. $x_{i}\in \mathbb{R}^{2}$ ). Besides, we use the squared Euclidean distance to define the cost matrix between two datasets $\{(x_{i},\mu_{i})\}_{i=1}^{m}$ and $\{(y_{j},\nu_{j})\}_{j=1}^{n}$ as following
+For convenience, we assume that datapoints are followed 2D distribution (i.e. $x_{i}\in \mathbb{R}^{2}$ ). Besides, we use the squared Euclidean distance to define the cost matrix between two datas $\{(x_{i},\mu_{i})\}_{i=1}^{m}$ and $\{(y_{j},\nu_{j})\}_{j=1}^{n}$ as following
 \begin{equation}
   c_{ij}=||x_{i}-y_{j}||_{2}^{2}\quad\forall i, j
 \end{equation}
@@ -470,27 +473,30 @@ We have tested our algorithms on four types of datasets
   data sample is then scaled in the x-Axis by 0.5 and in the y-Axis by 2, while the target
   data set is scaled in the x-Axis by 2 and in the y-Axis by 0.5.
   Besides, the weights are both normalized uniform distributions.
-  \item Caffarelli [\textbf{Gerber2017}]\\
-  Caffarelli’s example consists of two uniform samples (source and target data set) on $[-1, 1]\times[-1, 1]$  of size $m=n$. Any points outside the unit circle are then
-discarded. Additionally, the target data sample is split along the x-Axis at 0 and shifted by
-$+2$ and $-2$ for points with positive and negative x-Axis values, respectively. The weights are both normalized uniform distributions, too.
-  \item DOTmark [\textbf{Schrieber2017}]\\
-  In DOTmark, we always have $m=n=r^{2}$, and $(x_i)_{1\leq i\leq m} = (y_j)_{1\leq j\leq n}$ form a regular square grid of resolution $r\times r$ in $\mathbb{R}^{2}$, which are the natural position of source and target data set. The weights are the brightness distributions with normalization. Besides, DOTmark consists of 10 classes of 10 different
-  images, each of which is available at the 5 different
-  resolutions from $32\times32$ to $512\times512$ (in doubling steps per dimension).
-\end{itemize}
-\begin{figure}[h]
+  \begin{figure}[H]
   \centering
   \includegraphics[width=.5\textwidth]{ellip.png}
   \captionsetup{justification=centering}
   \caption{\label{fig:ellip}$m=n=1000$, ellipse example}
 \end{figure}
-\begin{figure}[h]
+
+  
+  \item Caffarelli [\textbf{Gerber2017}]\\
+  Caffarelli’s example consists of two uniform samples (source and target data set) on $[-1, 1]\times[-1, 1]$  of size $m=n$. Any points outside the unit circle are then
+discarded. Additionally, the target data sample is split along the x-Axis at 0 and shifted by
+$+2$ and $-2$ for points with positive and negative x-Axis values, respectively. The weights are both normalized uniform distributions, too.
+\begin{figure}[H]
   \centering
   \includegraphics[width=.9\textwidth]{caffa.png}
   \captionsetup{justification=centering}
   \caption{\label{fig:caffa}$m=n=1000$, Caffarelli’s example}
 \end{figure}
+  \item DOTmark [\textbf{Schrieber2017}]\\
+  In DOTmark, we always have $m=n=r^{2}$, and $(x_i)_{1\leq i\leq m} = (y_j)_{1\leq j\leq n}$ form a regular square grid of resolution $r\times r$ in $\mathbb{R}^{2}$, which are the natural position of source and target data set. The weights are the brightness distributions with normalization. Besides, DOTmark consists of 10 classes of 10 different
+  images, each of which is available at the 5 different
+  resolutions from $32\times32$ to $512\times512$ (in doubling steps per dimension).
+\end{itemize}
+
 \begin{table}[H]
   \centering
   \begin{tabular}{|c|c|}
@@ -513,12 +519,24 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \caption{\label{tab:table1}The 10 classes in the DOTmark}
 \end{table}
 
-\subsection{Numerical result}
+\subsection{Numerical Result}
+In this section, we will show the performance of different algorithms or solvers for the above mentioned datasets. For convenience, MOSEK and Gurobi are denoted by \textbf{M} and \textbf{G} respectively. Besides, 'prim', 'dual' and 'int' are corresponding to 'primal simplex', 'dual simplex' and 'interior point'.
+
+In order to evaluate the performance of different algorithms and solvers, we mark down some experimental performance indicators. '\textbf{dist}' stands for the Wasserstein distance, which equals $\sum_{i}\sum_{j}c_{ij}\pi_{ij}$ for discrete optimal transport. '\textbf{time}' stands for the using time for solving OT problem. Besides, we set the fixed iterations=15000 for ADMM primal, 3000 for sinkhorn and 30 for sinkhorn-Newton in the whole numerical experiment. What's more, we also took the errors of weight into consideration via 2 indicators '\textbf{err $\mu$}' and '\textbf{err $\nu$}'.
+
+\begin{equation}
+  \begin{aligned}
+  err \mu=\sum_{i=1}^{m}\left|\sum_{j=1}^{n}\pi_{ i j } - \mu_i \right|\\
+  err \nu=\sum_{j=1}^{n}\left|\sum_{i=1}^{m}\pi_{ i j } - \nu_i \right|
+  \end{aligned}
+\end{equation}
+
+In order to make a comprehensive comparison between different algorithms and solvers, we had tested 4 different scale, $m=n=256,512,1024,2048$ when used random, ellipse and Caffarelli dataset.
 \begin{table}[H]
   \centering
   \begin{tabular}{|c|c|cccccccc|}
     \hline
-    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM prim&Sinkhorn\\
+    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM primal&Sinkhorn\\
     \hline
     \hline
   \multirow{4}*{256}&dist&5.45e-3&7.25e-3&8.09e-3&5.94e-3&8.62e-3&5.13e-3&5.04e-3&8.64e-3\\
@@ -548,10 +566,10 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \centering
   \begin{tabular}{|c|c|cccccccc|}
     \hline
-    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM prim&Sinkhorn\\
+    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM primal&Sinkhorn\\
     \hline
     \hline
-  \multirow{4}*{256}&dist&2.37&2.27&1.88&2.28&2.12&2.26&2.22&2.41\\
+  \multirow{4}*{256}&dist&2.37&2.27&1.88&2.28&2.12&2.26&2.22&2.419\\
   ~&time&5.42e-1&9.80&4.10&6.57e-1&1.49&7.22e-1&37.5&20.8\\  
   ~&err $\mu$&1.76e-5&9.54e-18&1.65e-12&0&0&0&1.42e-5&6.98e-17\\   
   ~&err $\nu$&1.76e-5&9.54e-18&1.65e-12&0&0&0&1.40e-5&4.54e-16\\
@@ -566,10 +584,10 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   ~&err $\mu$&9.39e-5&1.59e-16&5.37e-10&0&0&0&1.02e-4&1.25e-16\\   
   ~&err $\nu$&9.39e-5&1.48e-16&5.37e-10&0&0&0&1.02e-4&6.47e-16\\
   \hline
-  \multirow{4}*{2048}&dist&2.38&2.23&2.28&2.27&2.22&2.37&2.31&*\\
-  ~&time&32.6&4.37e+2&47.9&1.16e+3&8.24e+2&81.9&7.88e+3&*\\  
-  ~&err $\mu$&2.42e-4&1.29e-16&1.52e-13&0&0&0&4.67e-3&*\\   
-  ~&err $\nu$&2.42e-4&1.31e-16&1.40e-13&0&0&0&4.65e-3&*\\
+  \multirow{4}*{2048}&dist&2.38&2.23&2.28&2.27&2.22&2.37&2.31&2.27\\
+  ~&time&32.6&4.37e+2&47.9&1.16e+3&8.24e+2&81.9&7.88e+3&6.52e+3\\  
+  ~&err $\mu$&2.42e-4&1.29e-16&1.52e-13&0&0&0&4.67e-3&1.21e-15\\   
+  ~&err $\nu$&2.42e-4&1.31e-16&1.40e-13&0&0&0&4.65e-3&1.07e-15\\
   \hline
   \end{tabular}
   \caption{\label{tab:table1}Numerical result of ellipse example}
@@ -578,7 +596,7 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \centering
   \begin{tabular}{|c|c|cccccccc|}
     \hline
-    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM prim&Sinkhorn\\
+    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM primal&Sinkhorn\\
     \hline
     \hline
   \multirow{4}*{256}&dist&4.06&3.91&4.03&4.08&3.86&4.15&4.02&4.24\\
@@ -604,13 +622,16 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \end{tabular}
   \caption{\label{tab:table1}Numerical result of Caffarelli's example}
 \end{table}
+
 Due to the limited time, we
 only tested a randomly chosen pair of images from each class with size $32\times32$, whose corresponding cost matirx is $1024\times1024$.
-\begin{table}[H]
+
+
+\begin{table}[h]
   \centering
   \begin{tabular}{|c|c|cccccccc|}
   \hline
-  $\#$&&M prim&M dual&M int&G prim&G dual&G int&ADMM prim&Sinkhorn\\
+  $\#$&&M prim&M dual&M int&G prim&G dual&G int&ADMM primal&Sinkhorn\\
   \hline
   \hline
   \multirow{4}*{1}&dist&6.93e-4&6.93e-4&6.93e-4&6.93e-4&6.93e-4&6.93e-4&6.92e-4&6.62e-4\\
@@ -666,10 +687,122 @@ only tested a randomly chosen pair of images from each class with size $32\times
   \end{tabular}
   \caption{\label{tab:table1}Numerical result of 10 classes in the DOTmark}
 \end{table}
+For solvers, it seems that Gurobi may always reach the truly optimal solution, while MOSEK sometimes fails and result in large errors of weight. For MOSEK, the primal simplex method are faster than the interior method and the dual simplex method, but larger errors of weight. For Gurobi, simplex methods are generally faster than interior point methods, because an simplex methods are specified for linear programs. The bad proformance of the dual simplex may result from the huge amount of constraints.
+Gurobi being generally better than MOSEK because of defect of the Python interface of MOSEK.
 
+From the overall numerical results,  we found that all the algorithms converge, but there are still some difference. As a stable and universal algorithm,the performance of ADMM primal is  not completely capable of different problems. ADMM primal needs thousands of iterations to reach optimal value, but errors of weight needs more iterations to reach 1e-4 or fewer. Thus, the using time of ADMM primal is the worst one.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.8\textwidth]{loss1.png}
+  \captionsetup{justification=centering}
+  \caption{\label{fig:loss}$m=n=1000$, solving Caffarelli’s example via ADMM primal}
+\end{figure}
+
+The implementation and thinking of Sinkhorn algorithm are nothing difficult. The number of hyperparameter is only one, $\epsilon$. From the above mentioned theoratical introduction of Sinkhorn, $\epsilon$ stands for the weight of entropy regularization. If $\epsilon$ is extremely large, the entropy term will be the dominant of the problem, which will mislead the original problem to a completely different problem. Thus, the optimal solution of this problem will larger than true optimal value. On the other hand, If $\epsilon$ is extremely small, the entropy term can be ignored and makes no difference in this problem. In particular experiment, when using extremely small $\epsilon$, the algorithm will be unstable and always overflow due to the defect of float point.
+
+All the codes are implemented in Python. 
+\subsection{A Discussion of Sinkhorn-Newton Algorithm}
+
+Comparing with sinkhorn algorithm, we can easily find that the using time of sinkhorn-Newton are longer than sinkhorn at small-scale datasets. Because, sinkhorn-Newton algorithm has an expensive step to solve a linear equation. However, when solving large-scale datasets, the efficieny of sinkhorn-Newton is better than sinkhorn due to fewer iterations. For sinkhorn algorithm, it usually needs hundreds of iterations in order to decrease err $\mu$ , while sinkhorn-Newton algorithm only needs dozens of iterations. Besides, sinkhorn-Newton algorithm has great performance of err $\mu$ and err $\nu$, even better than Gurobi and MOSEK. 
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|ccc|}
+    \hline
+    $m=n$&&random&ellipse&Caffarelli\\
+    \hline
+    \hline
+  \multirow{4}*{256}&dist&9.70e-3&2.59&4.53\\
+  ~&time&14.4&23.9&11.0\\  
+  ~&err $\mu$&8.82e-15&3.01e-15&2.68e-16\\   
+  ~&err $\nu$&1.47e-14&3.53e-15&3.21e-16\\
+  \hline
+  \multirow{4}*{512}&dist&6.22e-3&2.48&4.23\\
+  ~&time&67.7&95.4&80.5\\  
+  ~&err $\mu$&8.75e-16&6.15e-16&1.43e-15\\   
+  ~&err $\nu$&1.24e-15&7.05e-16&1.53e-15\\
+  \hline
+  \multirow{4}*{1024}&dist&5.4e-3&2.49&4.28\\
+  ~&time&1.69e+2&2.83e+2&2.52e+2\\  
+  ~&err $\mu$&1.72e-14&2.02e-16&1.25e-16\\   
+  ~&err $\nu$&2.15e-14&5.96e-16&6.28e-16\\
+  \hline
+  \multirow{4}*{2048}&dist&4.36e-3&2.50&4.28\\
+  ~&time&1.22e+3&1.18e+3&1.23e+3\\  
+  ~&err $\mu$&1.88e-14&2.23e-16&1.90e-16\\   
+  ~&err $\nu$&2.39e-14&8.64e-16&8.59e-16\\
+  \hline
+  \end{tabular}
+  \caption{\label{tab:table1}Numerical result of Sinkhorn-Newtom algorithm}
+\end{table}
+
+However, sinkhorn-Newton algorithm isn't a stable and universal algorithm. The value of hyperparameter $\epsilon$ is extremely sensitive towards different datasets. From the simplification of algorithm, we can find that $\epsilon$ only makes a difference at the initial step to smooth cost matrix $c$. In this way, if $\epsilon$ is extremely large, the cost matrix will close to zero matrix, which smooths over the characteristics of different cost matrix and results in bigger distance between two datas than Wasserstein distance. On the other hand, if $\epsilon$ is lower than specific critical value, the singularity of cost matrix will be strengthened via exponential function, which results in the Instability of solving linear equation and finally overflowing.
+
+\subsection{A Discussion of Sinkhorn-Newton Dual Algorithm}
+
+What's embarassing is that we don't make it to find a proper parameter for  Sinkhorn-Newton dual algorithm. What's more, strange things happens as the final loss (distance) output is always higher than the true distance (mosek/gurobi output) although the dual method achieves similar error results as its primal opponent and a faster performance. A possible explanation is that there may be a small dual gap due to the entropy regularization term introduced in by us, and it is enlarged by our mistakes at improper numerical process such as conjugate gradient.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|ccc|}
+    \hline
+    $m=n$&&random&ellipse&Caffarelli\\
+    \hline
+    \hline
+  \multirow{4}*{256}&dist&0.27& 3.93&6.12\\
+  ~&time&5.14&7.54&10.3\\
+  ~&err $\mu$&4.57e-15&3.32e-16&8.45e-16\\
+  ~&err $\nu$&9.45e-15&5.13e-16&2.89e-16\\
+  \hline
+  \multirow{4}*{512}&dist&0.32&4.48&6.02\\
+  ~&time&10.52&11.98&20.4\\
+  ~&err $\mu$&4.50e-15&3.75e-16&3.47e-16\\
+  ~&err $\nu$&3.58e-16&7.48e-16&8.01e-16\\
+  \hline
+  \multirow{4}*{1024}&dist&0.33&4.19&6.28\\
+  ~&time&90.27&1.83e+2&2.12e+2\\
+  ~&err $\mu$&4.85e-14&3.12e-16&2.34e-16\\
+  ~&err $\nu$&6.32e-14&4.87e-16&4.92e-16\\
+  \hline
+  \multirow{4}*{2048}&dist&0.30&4.30&6.78\\
+  ~&time&&8.8e+2&1.23e+3\\
+  ~&err $\mu$&3.98e-14&4.98e-16&7.34e-16\\
+  ~&err $\nu$&9.45e-14&5.70e-16&5.28e-16\\
+  \hline
+  \end{tabular}
+  \caption{\label{tab:table1}Numerical result of Sinkhorn-Newtom Dual algorithm}
+\end{table}
+
+\subsection{The Changing Process of $\mathbf{P}$: the Merit of Sinkhorn-Newton Algorithm}
+For optimal transport problem between two one-dimensional distributions, we can easily see the connection between them and their final coupling $\mathbf{P}$ as in \ref{fig:ot}. Besides we can visualize the changing process of  $\mathbf{P}$ and get a clear view of how the algorithm help to find the optimal transport. However, for two-dimensional distributions, there is a gap of it because we priorly reshape a two-dimensional distribution into one-dimension to apply our algorithm and lose the visualizability. 
+
+Still, the change of coupling  $\mathbf{P}$ can give us some insights of different algorithms. First let's see that of ADMM\_primal:
+\begin{figure}[H] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=5.5in]{pi_admm_primal_ellip_n16.png} 
+   \caption{$\mathbf{P}$'s change of ADMM primal}
+   \label{fig:example}
+\end{figure}
+Here we choose the ellipse dataset. It's astonishing that the plot result shows in one direction, the vertical direction, the $\mathbf{P}$ is exactly uniformly equal. Even if we turn to other datasets, ADMM remains this, indicating this kind of change is a property of algorithm.
+
+How about Sinkhorn?
+\begin{figure}[H] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=5.5in]{pi_sinkhorn_ellip_n16.png} 
+   \caption{$\mathbf{P}$'s change of Sinkhorn}
+   \label{fig:example}
+\end{figure}
+It seems totally random. Finally, let's see Sinkhorn-Newton:
+\begin{figure}[H] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=5.5in]{pi_sinkhorn_newton_ellip_n16} 
+   \caption{$\mathbf{P}$'s change of Sinkhorn-Newton}
+   \label{fig:example}
+\end{figure}
+We find that at the early stage, Sinkhorn-Newton algorithm behaves just like ADMM primal and then it turns into a Sinkhorn-like one. It converges fast at an early age with the aid of ADMM-like property and then get to a stable solution with Sinkhorn's solution property. According to this explanation, though it's somewhat heuristic, we can now say that the Sinkhorn-Newton is an algorithm that combines the merits of ADMM and Sinkhorn.
 
 \section{Conclusion and More}
-We have tried several first-order and second-order methods which have good performance in the context of discrete optimal transport, including ADMM-based methods and Entropy regularization-based methods, and both have their own merits and drawbacks. We run thorough experiments to test their performances and make comprehensive comparisons in many aspects in \ref{sec: results} .
+We have tried several first-order and second-order methods which have good performance in the context of discrete optimal transport, including ADMM-based methods and Entropy regularization-based methods, and both have their own merits and drawbacks. We run thorough experiments to test their performances and make comprehensive comparisons in many aspects in \ref{sec: results}.
 
 As for our next move, we aim to refine some of our existing algorithms to have a more stable performance and higher convergence rate. For some of our algorithms, we find some empirical tuning skills and we will consider their inner relationships with the iteration process. We also have ambition to test multi-stage iteration step on dual of ADMM and other methods, holding the believe that on different scale we need to provide different parameters.
 

@@ -9,10 +9,9 @@ loss_dict_dotmark = {'WhiteNoise': 6e-4, 'GRFrough': 1.4e-3, 'GRFmoderate': 3.9e
                      'ClassicImages': 6.1e-2, 'MicroscopyImages': 1e-2}
 loss_dict_notdot = {'random': 4.15e-2, 'ellip': 4.1, 'Caffa': 4.158}
 
-f = open("test/sinkhorn_newton_notdot_test.txt", 'w+')
+f = open("test/sinkhorn_newton_test.txt", 'w+')
 
-# for data in ['DOTmark', 'random', 'Caffa', 'ellip']:
-for data in ['random', 'Caffa', 'ellip']:
+for data in ['DOTmark', 'random', 'Caffa', 'ellip']:
     if data == 'DOTmark':
         n = 32
         for imageclass in imageclass_list:

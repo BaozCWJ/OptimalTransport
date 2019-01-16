@@ -1,6 +1,5 @@
 import argparse
 from dataset import *
-import pdb
 
 parser = argparse.ArgumentParser()
 
@@ -32,7 +31,6 @@ def min_col(A, eps):
 
 
 def Sinkhorn_Logdomain(c, a, b, iters, eps, eps_iters, is_tunning=False):
-    # a,b 是边缘分布
     m, n = c.shape
 
     f = np.ones((m, 1))
@@ -41,14 +39,12 @@ def Sinkhorn_Logdomain(c, a, b, iters, eps, eps_iters, is_tunning=False):
         K = np.exp(- c / eps)
         for i in range(iters):
             S = c - f - g.T
-            # pdb.set_trace()
             f = min_row(S, eps) - f.squeeze() + eps * np.log(a)
             f = f.reshape((m, 1))
             S = c - f - g.T
             g = min_col(S, eps) - g.squeeze() + eps * np.log(b)
             g = g.reshape((n, 1))
 
-            # pi = np.diag(np.exp(f.squeeze() / eps)).dot(K).dot(np.diag(np.exp(g.squeeze() / eps)))
             pi = np.diag(np.exp(-f.squeeze() / eps)).dot(K).dot(np.diag(np.exp(-g.squeeze() / eps)))
 
             if is_tunning and i % 1 == 0:
