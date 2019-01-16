@@ -51,7 +51,7 @@
   \texttt{1500011335@pku.edu.cn} \\
   \And
   Dinghuai Zhang \\
-  School of Mathematics\\
+  School of Mathematical Sciences\\
   Peking University\\
   1600013525\\
   \texttt{1600013525@pku.edu.cn} \\
@@ -81,7 +81,9 @@ Optimal transport (OT) problems are an important series of problems considering 
 
 Over nearly 200 years, theory of optimal transport have not made much progress until some big mathematical breakthroughs in the 1980s and 1990s. Since then the field has flourished and optimal transport theory has found applications in PDEs, geometry, statistics, economics and image processing [5]. However, although it is such a prosperous research field, efficient algorithm to numerically solve continuous or discrete optimal transport problems is absent. While there are some existing algorithms [6] [7], there is still vast space for improvement.
 
-In this report, we derive and implement some algorithms for solving a discrete optimal transport problem from a linear programming view. For some of them which is hard for tunning, we make some discussion about the reasons. Furthermore, we dive into the deep reasons for the good or bad performance of some algorithms. Our codes can be reached in GitHub: \href{https://github.com/zdhNarsil/OptimalTransport}{https://github.com/zdhNarsil/OptimalTransport} or \href{https://github.com/BaozCWJ/OptimalTransport}{https://github.com/BaozCWJ/OptimalTransport}. 
+In this report, we derive and implement some algorithms for solving a discrete optimal transport problem from a linear programming view. For some of them which is hard for tunning, we make some discussion about the reasons. Furthermore, we dive into the deep reasons for the good or bad performance of some algorithms. Thus these works answers the question \textbf{1 (a)(b)(c)} and \textbf{2 (a)(b)(c)}, mainly in section \ref{sec: results}. 
+
+Our codes can be reached in GitHub: \href{https://github.com/zdhNarsil/OptimalTransport}{https://github.com/zdhNarsil/OptimalTransport} or \href{https://github.com/BaozCWJ/OptimalTransport}{https://github.com/BaozCWJ/OptimalTransport}. 
 
 \section{Problem Statement}
 The standard formulation of optimal transport are derived from couplings. [8] That is, let $ \left(\mathcal{X}, \mu \right)$ and $\left(\mathcal{Y}, \nu \right)$  be two probability spaces, and a probability distribution $\pi$ on $ \mathcal{X} \times \mathcal{Y} $ is called \emph{coupling} if $ proj_{\mathcal{X}} (\pi) = \mu $ and $ proj_{\mathcal{Y}} (\pi)= \nu $. An optimal transport between $ \left(\mathcal{X}, \mu \right)  $ and $ \left(\mathcal{Y}, \nu \right) $, or an optimal coupling, is a coupling minimize
