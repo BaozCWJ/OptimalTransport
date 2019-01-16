@@ -8,8 +8,8 @@ parser.add_argument('--image-class', type=str, default='ClassicImages')
 parser.add_argument('--n', type=float, default=32)
 parser.add_argument('--data', type=str, choices=['DOTmark', 'random', 'Caffa', 'ellip'], default='random')
 parser.add_argument('--iters', type=int, default=15000)
-parser.add_argument('--rho', type=float, default=1e3)
-parser.add_argument('--alpha', type=float, default=3)
+parser.add_argument('--rho', type=float, default=50)
+parser.add_argument('--alpha', type=float, default=10)
 parser.add_argument('--is-tunning', action="store_true", default=False)
 
 args = parser.parse_args()
@@ -55,14 +55,17 @@ def update(m, n, mu, nu, c, lamda, eta, e, d, rho, alpha):
 def ADMM_dual(c, mu, nu, iters, rho, alpha, is_tunning=False):
     m, n = c.shape
     lamda, eta, e, d = init(c)
-    for j in range(iters):
-        lamda, eta, e, d = update(m, n, mu, nu, c, lamda, eta, e, d, rho, alpha)
+    bigrho = rho * 2
+    while bigrho >= rho:
+        for j in range(iters):
+            lamda, eta, e, d = update(m, n, mu, nu, c, lamda, eta, e, d, bigrho, alpha)
 
-        if is_tunning and j % 100 == 0:
-            pi = -d  # ???
-            print('err1=', np.linalg.norm(pi.sum(axis=1) - mu, 1),
-                  'err2=', np.linalg.norm(pi.sum(axis=0) - nu, 1),
-                  'loss= ', (c * pi).sum())
+            if is_tunning and j % 100 == 0:
+                pi = -d
+                print('err1=', np.linalg.norm(pi.sum(axis=1) - mu, 1),
+                      'err2=', np.linalg.norm(pi.sum(axis=0) - nu, 1),
+                      'loss= ', (c * pi).sum())
+        bigrho /= 2
 
     print('err1=', np.linalg.norm(pi.sum(axis=1) - mu, 1),
           'err2=', np.linalg.norm(pi.sum(axis=0) - nu, 1),

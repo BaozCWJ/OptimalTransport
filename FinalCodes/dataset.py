@@ -31,6 +31,8 @@ def Random_position(num, scalar):
     return scalar * (np.random.rand(num * 2).reshape((num, 2)))
 
 
+# min, max, mean =
+# 2.7073308519587304e-07 1.9279079292932402 0.3367126205981927
 def Random_Cost(m, scalar=1):
     mu_position = Random_position(m, scalar)
     nu_position = Random_position(m, scalar)
@@ -94,6 +96,8 @@ def Caffarelli_position(num, x_center, y_center, r, d):
     return pos[0:num, ]
 
 
+# min, max, mean =
+# 1.021539782392053 15.874364301315035 6.723038900813291
 def Caffarelli_Cost(num, x_center, y_center, r, d):
     mu_position = Caffarelli_position(num, x_center, y_center, r, 0)
     nu_position = Caffarelli_position(num, x_center, y_center, r, d)

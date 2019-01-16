@@ -27,6 +27,7 @@
 \usepackage{multirow}
 \usepackage{graphicx}
 \usepackage[justification=centering]{caption}
+\usepackage{float}
 
 \title{Large-scale Optimal Transport}
 
@@ -67,15 +68,19 @@
 \end{abstract}
 
 \section{Introduction to Optimal Transport}
+Optimal transport (OT) problems are an important series of problems considering the minimal cost of transportation, receiving increasing attention from the community of applied mathematics. Its history can be date back to 18th century, the time of the French engineer Gaspard Monge or 1920s when mathematicians were trying to figure out a way to move things efficiently during World War I. Sometimes optimal transport can be seen as some kind of network flow problem, aiming to "transport" under some certain conditions. To put it in another way, given two distributions and a cost function, we aim to find a transport method that minimize a certain kind of cost. A specific definition can be seen in \ref{def} and \ref{Eq:StdLP_admm_primal}.
+
+Over nearly 200 years, theory of optimal transport have not made much progress until some big mathematical breakthroughs in the 1980s and 1990s. Since then the field has flourished and optimal transport theory has found applications in PDEs, geometry, statistics, economics and image processing [5]. However, although it is such a prosperous research field, efficient algorithm to numerically solve continuous or discrete optimal transport problems is absent. 
 
 \section{Problem Statement}
 The standard formulation of optimal transport are derived from couplings. [\textbf{Villani2009}] That is, let $ \left(\mathcal{X}, \mu \right)$ and $\left(\mathcal{Y}, \nu \right)$  be two probability spaces, and a probability distribution $\pi$ on $ \mathcal{X} \times \mathcal{Y} $ is called \emph{coupling} if $ proj_{\mathcal{X}} (\pi) = \mu $ and $ proj_{\mathcal{Y}} (\pi)= \nu $. An optimal transport between $ \left(\mathcal{X}, \mu \right)  $ and $ \left(\mathcal{Y}, \nu \right) $, or an optimal coupling, is a coupling minimize
+
 \begin{equation}
 \int_{ \mathcal{X} \times \mathcal{Y} } c ( x, y)  d \pi ( x, y ) 
+\label{def}
 \end{equation}
 
 Optimal transport problems can be categorized according to the discreteness of $\mu$ and $\nu$. In this report, we only consider discrete optimal tranport problems, where the two distributions are distributions of finite weighted points.
-
 A discrete optimal transport problem can be formulated into a linear program as
 \begin{equation} \label{Eq:StdLP}
 \begin{aligned}
@@ -196,19 +201,24 @@ Solution $\pi$ can be recovered by $\pi=-d$ from KKT conditions.
   }
   return $\pi=-d$
 \end{algorithm}
-\subsection{Add Entropy Regularization: Sinkhorn-Knopp Method }
+\subsection{Add Entropy Regularization: Sinkhorn-Knopp Algorithm}
 The discrete entropy of a coupling matrix is defined as
 \begin{equation}
 \mathbf { H } ( \mathbf { P } ) \stackrel { \mathrm { def } } { = } - \sum _ { i , j } \mathbf { P } _ { i , j } \left( \log \left( \mathbf { P } _ { i , j } \right) - 1 \right)
 \end{equation}
-The function $\mathbf{H}$ is strongly concave.
+The function $\mathbf{H}$ is strongly concave, we can see it by computing its 2-order derivatives:
+\begin{align}
+\frac{\partial ^ { 2 } \mathbf { H } ( P )}{\partial \mathbf{P}_{ij}^2} = - \operatorname { diag } \left( 1 / \mathbf { P } _ { i , j } \right)  
+\end{align}
+Notice that $\mathbf { P } _ { i , j } \leq 1$, it's obvious that $\mathbf { H } ( \mathbf { P } ) $ has a good property of convexity.
 
 The idea of the entropic regularization of optimal transport is to use $-\mathbf{H}$ as a regularizing function to obtain approximate solutions to the original transport problem:
 \begin{equation}
 \mathrm { L } _ { \mathrm { C } } ^ { \varepsilon } ( \mathbf { a } , \mathbf { b } ) \stackrel { \mathrm { def } } { = } \min _ { \mathbf { P } \in \mathbf { U } ( \mathbf { a } , \mathbf { b } ) } \langle \mathbf { P } , \mathbf { C } \rangle - \varepsilon \mathbf { H } ( \mathbf { P } )
 \label{sinkhorn target}
 \end{equation}
-(Actually, this can be interpreted as $\text{KL}(\mathbf{P}||\mathbf{K})$)
+(Actually, this can be interpreted as $\text{KL}(\mathbf{P}||\mathbf{K})$.)
+With strong convexity of $\mathbf { H  ( P )}$ our new target has a global minima.
 
 One can show that the solution to \ref{sinkhorn target} has the form of 
 \begin{equation}
@@ -225,6 +235,11 @@ take first order gradient and we get
 \Rightarrow\mathbf { P } _ { i , j } &= e ^ { \mathbf { f } _ { i } / \varepsilon } e ^ { - \mathbf { C } _ { i , j } / \varepsilon } e ^ { \mathbf { g } _ { j } / \varepsilon }
 \label{solution for P}
 \end{align}
+Thus we also get
+\begin{align}
+\mathbf{u} &= e^{\mathbf{f}/\epsilon}\\
+\mathbf{v} &= e^{\mathbf{g}/\epsilon}
+\end{align}
 Based on the constrain that:
 \begin{align}
 \operatorname { diag } ( \mathbf { u } ) \mathbf { K } \operatorname { diag } ( \mathbf { v } ) \mathbf { 1 } _ { m } &= \mathbf { a }\\
@@ -239,7 +254,7 @@ or :
 \begin{align}
 \mathbf { u } ^ { ( \ell + 1 ) }  { = } \frac { \mathbf { a } } { \mathbf { K } \mathbf { v } ^ { ( \ell ) } } \text { and } \mathbf { v } ^ { ( \ell + 1 ) } { = } \frac { \mathbf { b } } { \mathbf { K } ^ { \mathrm { T } } \mathbf { u } ^ { ( \ell + 1 ) } }
 \end{align}
-with $\mathbf { v } ^ { ( 0 ) } = \mathbf { 1 } _ { m }$ and $\mathbf { K } _ { i , j } = e^{-\mathbf{C}_{i,j}/\epsilon}$.
+with $\mathbf { v } ^ { ( 0 ) } = \mathbf { 1 } _ { m }$ and $\mathbf { K } _ { i ,j } = e^{-\mathbf{C}_{i,j}/\epsilon}$.
 
 \subsection{Sinkhorn-Newton Method}
 From \ref{solution for P} and \ref{solution for marginal} we can conclude that our target could be reformulated as finding a zero point of
@@ -248,7 +263,7 @@ From \ref{solution for P} and \ref{solution for marginal} we can conclude that o
 F(\mathbf { f },\mathbf { g}) :=
 \left( \begin{array}{c}
 a -  \operatorname { diag } (   e ^ { -\mathbf { f }  / \epsilon } ) \mathbf { K }  e ^ { -\mathbf { g }  / \epsilon } \\
-b -  \operatorname { diag } (   e ^ { -\mathbf { g }  / \epsilon } ) \mathbf { K }  e ^ { -\mathbf { f }  / \epsilon }
+b -  \operatorname { diag } (   e ^ { -\mathbf { g }  / \epsilon } ) \mathbf { K }^ { \top }  e ^ { -\mathbf { f }  / \epsilon }
 \end{array} \right)
 \end{displaymath}
 where $a,b,\epsilon$ and $\mathbf { K}$ are known.
@@ -291,7 +306,35 @@ $\mathbf{P} ^ { k + 1 } \gets \operatorname { Diag } \left( \mathrm { e } ^ { - 
   return $\mathbf{P}$
 \end{algorithm}
 
-\subsection{Sinkhorn-Newton for Dual Method}
+\subsection{Sinkhorn-Newton for Dual Problem}
+For the dual problem
+\begin{align}
+\mathcal { L } ( \mathbf { P } , \mathbf { f } , \mathbf { g } ) &= \langle \mathbf { P } , \mathbf { C } \rangle - \varepsilon \mathbf { H } ( \mathbf { P } ) - \left\langle \mathbf { f } , \mathbf { P } \mathbf { 1 } _ { n } - \mathbf { a } \right\rangle - \left\langle \mathbf { g } , \mathbf { P } ^ { \mathrm { T } } \mathbf{ 1 } _ { n } - \mathbf { b } \right\rangle\\
+\frac { \partial \mathcal { L } ( \mathbf { P } , \mathbf { f } , \mathbf { g } ) } { \partial \mathbf { P } _ { i , j } } &=0\\
+\Rightarrow\hat{\mathbf { P }} &= e ^ { \mathbf { f }  / \varepsilon } e ^ { - \mathbf { C } / \varepsilon } e ^ { \mathbf { g }/ \varepsilon }\\
+\Rightarrow \mathcal{L}( \hat{\mathbf { P }} , \mathbf { f } , \mathbf { g } ) &= \langle \mathbf { f } , \mathbf { a } \rangle + \langle \mathbf { g } , \mathbf { b } \rangle - \varepsilon \left\langle e ^ { \mathbf { f } / \varepsilon } , \mathbf { K } e ^ { \mathbf { g } / \varepsilon } \right\rangle
+\end{align}
+We only need to solve
+\begin{align}
+\max _ { \mathbf { f } \in \mathbb { R } ^ { n } , \mathbf { g } \in \mathbb { R } ^ { m } } \langle \mathbf { f } , \mathbf { a } \rangle + \langle \mathbf { g } , \mathbf { b } \rangle - \varepsilon \left\langle e ^ { \mathbf { f } / \varepsilon } , \mathbf { K } e ^ { \mathbf { g } / \varepsilon } \right\rangle = Q ( \mathbf { f } , \mathbf { g } )
+\end{align}
+(Notice that this is an approximation of the original Kantorovich dual
+\begin{align}
+\mathrm { L } _ { \mathbf { C } } ( \mathbf { a } , \mathbf { b } ) &= \max _ { ( \mathbf { f } , \mathbf { g } ) \in \mathbf { R } ( \mathbf { a } , \mathbf { b } ) } \langle \mathbf { f } , \mathbf { a } \rangle + \langle \mathbf { g } , \mathbf { b } \rangle\\
+\mathbf { R } ( \mathbf { a } , \mathbf { b } ) &\stackrel { \mathrm { def } } { = } \left\{ ( \mathbf { f } , \mathbf { g } ) \in \mathbb { R } ^ { n } \times \mathbb { R } ^ { m } : \forall ( i , j ) \in \mathbb { Z } [ n ] \times [ m ] , \mathbf { f } \oplus \mathbf { g } \leq \mathbf { C } \right\}
+\end{align}
+)
+
+We can calculate its gradient
+\begin{align}
+\begin{aligned} 
+\left. \nabla \right| _ { \mathbf { f } } Q ( \mathbf { f } , \mathbf { g } ) & = \mathbf { a } - e ^ { \mathbf { f } / \varepsilon } \odot \left( \mathbf { K } e ^ { \mathbf { g } / \varepsilon } \right) \\
+ \left. \nabla \right| _ { \mathbf { g } } Q ( \mathbf { f } , \mathbf { g } ) & = \mathbf { b } - e ^ { \mathbf { g } / \varepsilon } \odot \left( \mathbf { K } ^ { T } e ^ { \mathbf { f } / \varepsilon } \right) \end{aligned}
+ \label{Q_grad}
+\end{align}
+and its Hessian matrix respectively.
+ 
+Then we derive the Newton-Raphson algorithm for minimizing $ Q ( \mathbf { f } , \mathbf { g } )$ :
 
 \begin{algorithm}[H]
   \SetAlgoNoLine
@@ -314,6 +357,63 @@ $k\gets k+1$
   return $\mathbf{P}$
 \end{algorithm}
 
+Or, in \ref{Q_grad} we can set the gradient to 0 straightly
+\begin{align}
+\mathbf { f } ^ { ( \ell + 1 ) } &= \varepsilon \log \mathbf { a } - \varepsilon \log \left( \mathbf { K } e ^ { \mathbf { g } ^ { ( \ell ) } / \varepsilon } \right)\label{f_update}\\
+\mathbf { g } ^ { ( \ell + 1 ) } &= \varepsilon \log \mathbf { b } - \varepsilon \log \left( \mathbf { K } ^ { \mathrm { T } } e ^ { \mathbf { f } ^ { ( \ell + 1 ) } / \varepsilon } \right)
+\label{g_update}
+\end{align}
+for $\ell \ge0$. However, it's actually the same as Sinkhorn-Knopp algorithm based on $( \mathbf { u } , \mathbf { v } ) = \left( e ^ { \mathbf { f } / \varepsilon } , e ^ { \mathbf { g } / \varepsilon } \right)$.
+
+\subsection{Log-domain Sinkhorn}
+We can rewrite the above formula \ref{f_update} and \ref{g_update} as
+\begin{align}
+\begin{aligned} \mathbf { f } ^ { ( \ell + 1 ) } & = \operatorname { Min } _ { \varepsilon } ^ { \mathrm { row } } \left( \mathbf { S } \left( \mathbf { f } ^ { ( \ell ) } , \mathbf { g } ^ { ( \ell ) } \right) \right) - \mathbf { f } ^ { ( \ell ) } + \varepsilon \log ( \mathbf { a } ) \\ \mathbf { g } ^ { ( \ell + 1 ) } & = \operatorname { Min } _ { \varepsilon } ^ { \mathrm { col } } \left( \mathbf { S } \left( \mathbf { f } ^ { ( \ell + 1 ) } , \mathbf { g } ^ { ( \ell ) } \right) \right) - \mathbf { g } ^ { ( \ell ) } + \varepsilon \log ( \mathbf { b } ) \end{aligned}
+\label{log update}
+\end{align}
+where $\mathbf { S } ( \mathbf { f } , \mathbf { g } ) = \left( \mathbf { C } _ { i , j } - \mathbf { f } _ { i } - \mathbf { g } _ { j } \right) _ { i , j }$ and
+\begin{align}
+\begin{aligned} \operatorname { Min } _ { \varepsilon } ^ { \mathrm { row } } ( \mathbf { A } ) &\stackrel { \mathrm { def } } { = } \left( \min _ { \varepsilon } \left( \mathbf { A } _ { i , j } \right) _ { j } \right) _ { i }  \in \mathbb { R } ^ { n } \\ \operatorname { Min } _ { \varepsilon } ^ { \mathrm { col } } ( \mathbf { A } ) &\stackrel { \mathrm { def} } { = }  \left( \min _ { \varepsilon } \left( \mathbf { A } _ { i , j } \right) _ { i } \right) _ { j } \in \mathbb { R } ^ { m } \end{aligned}
+\end{align}
+and $\min _ { \varepsilon } \mathbf { z } = - \varepsilon \log \sum _ { i } e ^ { - \mathbf { z } _ { i } / \varepsilon }$ for a vector $\mathbf{z}$.
+
+Let's probe into this expression:
+
+First, $\min _ { \varepsilon } \mathbf { z } $ is nothing but a differentiable approximation of $\min$ function. When we take $\epsilon \to 0$, we have $ \min _ { \varepsilon } \mathbf { z } = \min \mathbf{z}$. Besides, the above formula \ref{f_update} and \ref{g_update} are just
+\begin{align}
+\left( \mathbf { f } ^ { ( \ell + 1 ) } \right) _ { i } &= \min _ { \varepsilon } \left( \mathbf { C } _ { i j } - \mathbf { g } _ { j } ^ { ( \ell ) } \right) _ { j } + \varepsilon \log \mathbf { a } _ { i }\\
+\left( \mathbf { g } ^ { ( \ell + 1 ) } \right) _ { j } &= \min _ { \varepsilon } \left( \mathbf { C } _ { i j } - \mathbf { f } _ { i } ^ { ( \ell ) } \right) _ { i } + \varepsilon \log \mathbf { b } _ { j }
+\end{align}
+where $\left( \mathbf { C } _ { i j } - \mathbf { g } _ { j } ^ { ( \ell ) } \right) _ { j }$ denotes the soft-minimum of all values of the j-th column of matrix $\left( \mathbf { C } - \mathbf { 1 } _ { n } \left( \mathbf { g } ^ { ( \ell ) } \right) ^ { \top } \right)$. If we define $ \operatorname { Min } _ { \varepsilon } ^ { \mathrm { row } } ( \mathbf { A } ) $ and $ \operatorname { Min } _ { \varepsilon } ^ { \mathrm { col } } ( \mathbf { A } ) $ as above, then we get
+\begin{align}
+\mathbf { f } ^ { ( \ell + 1 ) } &= \operatorname { Min } _ { \varepsilon } ^ { \mathrm { row } } \left( \mathbf { C } - \mathbf { 1 } _ { n } \mathbf { g } ^ { ( \ell ) ^ { \mathrm { T } } } \right) + \varepsilon \log \mathbf { a }\\
+\mathbf { g } ^ { ( \ell + 1 ) } &= \operatorname { Min } _ { \varepsilon } ^ { \mathrm { col } } \left( \mathbf { C } - \mathbf { f } ^ { ( \ell ) } \mathbf { 1 } _ { m } ^ { \mathrm { T } } \right) + \varepsilon \log \mathbf { b }
+\end{align}
+After that we use a little stable trick
+\begin{align}
+\min _ { \varepsilon } \mathbf { z } = \underline { z } - \varepsilon \log \sum _ { i } e ^ { - \left( \mathbf { z } _ { i } - \underline { z } \right) / \varepsilon }
+\end{align}
+where $\underline{z} = \min \mathbf{z}$. Instead of $\underline{z}$, we use former iteration's value $\mathbf { f } ^ { ( \ell ) }$, then we get \ref{log update}.
+
+\subsection{More on Sinkhorn}
+Following [1] [2] [3] [4], the \ref{sinkhorn target} could be think of as a special case of the following convex optimization problem
+\begin{align}
+\min _ { \mathbf { P } } \sum _ { i , j } \mathbf { C } _ { i , j } \mathbf { P } _ { i , j } - \varepsilon \mathbf { H } ( \mathbf { P } ) + \iota _ { \{ \mathbf { a } \} } \left( \mathbf { P } \mathbf { 1 } _ { m } \right) + \iota _ { \{ \mathbf { b } \} } \left( \mathbf { P } ^ { \mathrm { T } } \mathbf { 1 } _ { n } \right)
+\end{align}
+where $\iota _ {  C }$ means the indicator of set $C$, which is
+\begin{align}
+\iota _ { \mathcal { C } } ( x ) = \left\{ \begin{array} { l l } { 0 } & { \text { if } \quad x \in \mathcal { C } } \\ { + \infty } & { \text { otherwise } } \end{array} \right.
+\end{align}
+Under this situation, the Sinkhorn-Knopp iteration can be extended as
+\begin{align}
+\mathbf { u } &\leftarrow \frac { \operatorname { Prox } _ { F } ^ { \mathrm { KL } } ( \mathbf { K } \mathbf { v } ) } { \mathbf { K } \mathbf { v } }\\
+\mathbf { v }& \leftarrow \frac { \operatorname { Prox } _ { G } ^ { \mathbf { K L } } \left( \mathbf { K } ^ { \mathrm { T } } \mathbf { u } \right) } { \mathbf { K } ^ { \mathrm { T } } \mathbf { u } }
+\end{align}
+where the proximal operator for KL divergence is defined as
+\begin{align}
+\quad \operatorname { Prox } _ { F } ^ { \mathbf { K L } } ( \mathbf { u } ) = \underset { \mathbf { u } ^ { \prime } \in \mathbb { R } _ { + } ^ { N } } { \operatorname { argmin } } \mathbf { K } \mathbf { L } \left( \mathbf { u } ^ { \prime } | \mathbf { u } \right) + F \left( \mathbf { u } ^ { \prime } \right), \forall \mathbf { u } \in \mathbb { R } _ { + } ^ { N } 
+\end{align}
+(an extention of normal proximal operator)
 
 \section{Numerical Result and Interpretation}
 \subsection{Description of datasets}
@@ -357,7 +457,7 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \captionsetup{justification=centering}
   \caption{\label{fig:caffa}$m=n=1000$, Caffarelli’s example}
 \end{figure}
-\begin{table}[h]
+\begin{table}[H]
   \centering
   \begin{tabular}{|c|c|}
   \hline
@@ -378,159 +478,161 @@ $+2$ and $-2$ for points with positive and negative x-Axis values, respectively.
   \end{tabular}
   \caption{\label{tab:table1}The 10 classes in the DOTmark}
 \end{table}
+
 \subsection{Numerical result}
-\begin{table}[h]
+\begin{table}[H]
   \centering
-  \begin{tabular}{|c|c|cccccc|}
+  \begin{tabular}{|c|c|cccccccc|}
     \hline
-    $m=n$&&M primal&M dual&M int&G primal&G dual&G int\\
+    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM prim&Sinkhorn\\
     \hline
     \hline
-  \multirow{4}*{256}&dist&5.45e-3&7.25e-3&8.09e-3&5.94e-3&8.62e-3&5.13e-3\\
-  ~&time&3.43e-1&3.75e-1&5.28e-1&6.79e-1&7.07e-1&8.56e-1\\  
-  ~&err $\mu$&1.79e-5&2.04e-17&2.31e-12&1.34e-17&9.97e-18&4.34e-18\\   
-  ~&err $\nu$&1.79e-5&2.45e-16&2.79e-12&5.36e-16&3.87e-16&5.05e-16\\
+  \multirow{4}*{256}&dist&5.45e-3&7.25e-3&8.09e-3&5.94e-3&8.62e-3&5.13e-3&5.04e-3&8.64e-3\\
+  ~&time&3.43e-1&3.75e-1&5.28e-1&6.79e-1&7.07e-1&8.56e-1&26.82&4.19\\  
+  ~&err $\mu$&1.79e-5&2.04e-17&2.31e-12&1.34e-17&9.97e-18&4.34e-18&4.67e-5&7.01e-3\\   
+  ~&err $\nu$&1.79e-5&2.45e-16&2.79e-12&5.36e-16&3.87e-16&5.05e-16&4.74e-5&8.54e-17\\
   \hline
-  \multirow{4}*{512}&dist&2.90e-3&2.88e-3&3.37e-3&3.79e-3&2.91e-3&5.52e-3\\
-  ~&time&1.39&1.70&2.93&2.83&3.40&4.27\\  
-  ~&err $\mu$&4.35e-5&2.67e-17&1.30e-13&1.08e-17&1.09e-15&1.21e-17\\   
-  ~&err $\nu$&4.35e-5&1.09e-16&1.04e-13&1.72e-16&1.26e-17&7.46e-16\\
+  \multirow{4}*{512}&dist&2.90e-3&2.88e-3&3.37e-3&3.79e-3&2.91e-3&5.52e-3&3.13e-3&3.61e-3\\
+  ~&time&1.39&1.70&2.93&2.83&3.40&4.27&1.03e+2&25.8\\  
+  ~&err $\mu$&4.35e-5&2.67e-17&1.30e-13&1.08e-17&1.09e-15&1.21e-17&8.40e-5&8.65e-3\\   
+  ~&err $\nu$&4.35e-5&1.09e-16&1.04e-13&1.72e-16&1.26e-17&7.46e-16&8.39e-5&1.20e-16\\
   \hline
-  \multirow{4}*{1024}&dist&1.78e-3&1.94e-3&1.89e-3&1.91e-3&1.80e-3&1.84e-3\\
-  ~&time&8.11&15.3&15.2&14.1&14.0&18.7\\  
-  ~&err $\mu$&1.04e-4&1.09e-16&1.38e-12&1.01e-17&1.12e-17&1.91e-15\\   
-  ~&err $\nu$&1.04e-4&1.91e-15&1.27e-12&6.49e-16&3.42e-16&9.43e-18\\
+  \multirow{4}*{1024}&dist&1.78e-3&1.94e-3&1.89e-3&1.91e-3&1.80e-3&1.84e-3&2.94e-3&2.79e-3\\
+  ~&time&8.11&15.3&15.2&14.1&14.0&18.7&4.52e+2&1.53e+2\\  
+  ~&err $\mu$&1.04e-4&1.09e-16&1.38e-12&1.01e-17&1.12e-17&1.91e-15&2.27e-4&1.07e-2\\   
+  ~&err $\nu$&1.04e-4&1.91e-15&1.27e-12&6.49e-16&3.42e-16&9.43e-18&2.20e-4&1.18e-16\\
   \hline
-  \multirow{4}*{2048}&dist&1.35e-3&1.36e-3&1.31e-3&1.42e-3&1.46e-3&1.49e-3\\
-  ~&time&35.0&1.05e+2&68.7&3.45e+2&58.4&88.9\\  
-  ~&err $\mu$&2.71e-4&2.61e-16&1.81e-12&9.41e-18&6.09e-16&4.95e-16\\   
-  ~&err $\nu$&2.7e-4&1.79e-15&2.27e-12&1.27e-15&1.17e-17&1.13e-17\\
+  \multirow{4}*{2048}&dist&1.35e-3&1.36e-3&1.31e-3&1.42e-3&1.46e-3&1.49e-3&1.48e-3&1.06e-3\\
+  ~&time&35.0&1.05e+2&68.7&3.45e+2&58.4&88.9&8.74e+3&1.99e+3\\  
+  ~&err $\mu$&2.71e-4&2.61e-16&1.81e-12&9.41e-18&6.09e-16&4.95e-16&8.99e-4&3.93e-3\\   
+  ~&err $\nu$&2.7e-4&1.79e-15&2.27e-12&1.27e-15&1.17e-17&1.13e-17&8.40e-4&1.48e-16\\
   \hline
   \end{tabular}
-  \caption{\label{tab:table1}random}
+  \caption{\label{tab:table1}Numerical result of random dataset}
 \end{table}
-\begin{table}[h]
+\begin{table}[H]
   \centering
-  \begin{tabular}{|c|c|cccccc|}
+  \begin{tabular}{|c|c|cccccccc|}
     \hline
-    $m=n$&&M primal&M dual&M int&G primal&G dual&G int\\
+    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM prim&Sinkhorn\\
     \hline
     \hline
-  \multirow{4}*{256}&dist&2.37&2.27&1.88&2.28&2.12&2.26\\
-  ~&time&5.42e-1&9.80&4.10&6.57e-1&1.49&7.22e-1\\  
-  ~&err $\mu$&1.76e-5&9.54e-18&1.65e-12&0&0&0\\   
-  ~&err $\nu$&1.76e-5&9.54e-18&1.65e-12&0&0&0\\
+  \multirow{4}*{256}&dist&2.37&2.27&1.88&2.28&2.12&2.26&2.22&2.41\\
+  ~&time&5.42e-1&9.80&4.10&6.57e-1&1.49&7.22e-1&37.5&20.8\\  
+  ~&err $\mu$&1.76e-5&9.54e-18&1.65e-12&0&0&0&1.42e-5&6.98e-17\\   
+  ~&err $\nu$&1.76e-5&9.54e-18&1.65e-12&0&0&0&1.40e-5&4.54e-16\\
   \hline
-  \multirow{4}*{512}&dist&2.36&2.39&2.24&2.15&2.31&2.32\\
-  ~&time&1.65&5.01&1.49&4.87&4.62&4.01\\  
-  ~&err $\mu$&4.05e-5&2.04e-17&2.01e-11&0&0&0\\   
-  ~&err $\nu$&4.05e-5&1.95e-17&2.01e-11&0&0&0\\
+  \multirow{4}*{512}&dist&2.36&2.39&2.24&2.15&2.31&2.32&2.47&2.38\\
+  ~&time&1.65&5.01&1.49&4.87&4.62&4.01&2.48e+2&72.2\\  
+  ~&err $\mu$&4.05e-5&2.04e-17&2.01e-11&0&0&0&3.39e-5&1.05e-16\\   
+  ~&err $\nu$&4.05e-5&1.95e-17&2.01e-11&0&0&0&3.40e-5&6.26e-16\\
   \hline
-  \multirow{4}*{1024}&dist&2.24&2.11&2.21&2.24&2.18&2.27\\
-  ~&time&7.89&70.4&9.73&64.5&21.9&16.6\\  
-  ~&err $\mu$&9.39e-5&1.59e-16&5.37e-10&0&0\\   
-  ~&err $\nu$&9.39e-5&1.48e-16&5.37e-10&0&0\\
+  \multirow{4}*{1024}&dist&2.24&2.11&2.21&2.24&2.18&2.27&2.25&2.39\\
+  ~&time&7.89&70.4&9.73&64.5&21.9&16.6&8.41e+2&2.68e+2\\  
+  ~&err $\mu$&9.39e-5&1.59e-16&5.37e-10&0&0&0&1.02e-4&1.25e-16\\   
+  ~&err $\nu$&9.39e-5&1.48e-16&5.37e-10&0&0&0&1.02e-4&6.47e-16\\
   \hline
-  \multirow{4}*{2048}&dist&2.38&2.23&2.28&2.27&2.22&2.37\\
-  ~&time&32.6&4.37e+2&47.9&1.16e+3&8.24e+2&81.9\\  
-  ~&err $\mu$&2.42e-4&1.29e-16&1.52e-13&0&0&0\\   
-  ~&err $\nu$&2.42e-4&1.31e-16&1.40e-13&0&0&0\\
+  \multirow{4}*{2048}&dist&2.38&2.23&2.28&2.27&2.22&2.37&2.31&*\\
+  ~&time&32.6&4.37e+2&47.9&1.16e+3&8.24e+2&81.9&7.88e+3&*\\  
+  ~&err $\mu$&2.42e-4&1.29e-16&1.52e-13&0&0&0&4.67e-3&*\\   
+  ~&err $\nu$&2.42e-4&1.31e-16&1.40e-13&0&0&0&4.65e-3&*\\
   \hline
   \end{tabular}
-  \caption{\label{tab:table1}ellipse}
+  \caption{\label{tab:table1}Numerical result of ellipse example}
 \end{table}
-\begin{table}[h]
+\begin{table}[H]
   \centering
-  \begin{tabular}{|c|c|cccccc|}
+  \begin{tabular}{|c|c|cccccccc|}
     \hline
-    $m=n$&&M primal&M dual&M int&G primal&G dual&G int\\
+    $m=n$&&M prim&M dual&M int&G prim&G dual&G int&ADMM prim&Sinkhorn\\
     \hline
     \hline
-  \multirow{4}*{256}&dist&4.06&3.91&4.03&4.08&3.86&4.15\\
-  ~&time&2.82e-1&8.80&6.54e-1&6.80e-1&1.96&7.63e-1\\  
-  ~&err $\mu$&1.67e-5&2.78e-17&1.98e-12&0&0&0\\   
-  ~&err $\nu$&1.67e-5&2.78e-17&1.98e-12&0&0&0\\
+  \multirow{4}*{256}&dist&4.06&3.91&4.03&4.08&3.86&4.15&4.02&4.24\\
+  ~&time&2.82e-1&8.80&6.54e-1&6.80e-1&1.96&7.63e-1&55.2&12.4\\  
+  ~&err $\mu$&1.67e-5&2.78e-17&1.98e-12&0&0&0&4.07e-6&6.46e-17\\   
+  ~&err $\nu$&1.67e-5&2.78e-17&1.98e-12&0&0&0&4.03e-6&4.59e-16\\
   \hline
-  \multirow{4}*{512}&dist&3.95&3.97&4.05&4.10&3.97&3.96\\
-  ~&time&1.88&5.37&3.60&3.50&3.61&4.63\\  
-  ~&err $\mu$&4.14e-5&7.55e-17&5.79e-12&0&0&0\\   
-  ~&err $\nu$&4.14e-5&7.59e-17&5.79e-12&0&0&0\\
+  \multirow{4}*{512}&dist&3.95&3.97&4.05&4.10&3.97&3.96&3.99&4.21\\
+  ~&time&1.88&5.37&3.60&3.50&3.61&4.63&4.00e+2&50.3\\  
+  ~&err $\mu$&4.14e-5&7.55e-17&5.79e-12&0&0&0&4.03e-5&9.84e-17\\   
+  ~&err $\nu$&4.14e-5&7.59e-17&5.79e-12&0&0&0&4.08e-5&6.09e-16\\
   \hline
-  \multirow{4}*{1024}&dist&3.99&4.04&4.09&4.00&4.00&3.95\\
-  ~&time&6.01&49.9&14.8&29.9&18.7&22.8\\  
-  ~&err $\mu$&9.80e-5&1.40e-16&8.04e-12&0&0&0\\   
-  ~&err $\nu$&9.80e-5&1.40e-16&8.12e-12&0&0&0\\
+  \multirow{4}*{1024}&dist&3.99&4.04&4.09&4.00&4.00&3.95&3.97&4.35\\
+  ~&time&6.01&49.9&14.8&29.9&18.7&22.8&1.52e+3&1.72e+2\\  
+  ~&err $\mu$&9.80e-5&1.40e-16&8.04e-12&0&0&0&4.42e-4&1.33e-16\\   
+  ~&err $\nu$&9.80e-5&1.40e-16&8.12e-12&0&0&0&4.43e-4&6.29e-16\\
   \hline
-  \multirow{4}*{2048}&dist&3.97&3.99&4.06&3.99&3.97&4.00\\
-  ~&time&27.9&4.93e+2&58.0&7.47e+2&1.02e+2&1.02e+1\\  
-  ~&err $\mu$&2.54e-4&3.95e-16&2.53e-13&0&0&0\\   
-  ~&err $\nu$&2.54e-4&3.96e-16&2.49e-13&0&0&0\\
+  \multirow{4}*{2048}&dist&3.97&3.99&4.06&3.99&3.97&4.00&4.04&4.13\\
+  ~&time&27.9&4.93e+2&58.0&7.47e+2&1.02e+2&1.02e+1&1.06e+4&8.44e+3\\  
+  ~&err $\mu$&2.54e-4&3.95e-16&2.53e-13&0&0&0&8.60e-3&1.83e-16\\   
+  ~&err $\nu$&2.54e-4&3.96e-16&2.49e-13&0&0&0&8.60e-3&9.74e-16\\
   \hline
   \end{tabular}
-  \caption{\label{tab:table1}Caffarelli's example}
+  \caption{\label{tab:table1}Numerical result of Caffarelli's example}
 \end{table}
 Due to the limited time, we
 only tested a randomly chosen pair of images from each class with size $32\times32$, whose corresponding cost matirx is $1024\times1024$.
-\begin{table}[h]
+\begin{table}[H]
   \centering
-  \begin{tabular}{|c|c|cccccc|}
+  \begin{tabular}{|c|c|cccccccc|}
   \hline
-  $\#$&&M primal&M dual&M int&G primal&G dual&G int\\
+  $\#$&&M prim&M dual&M int&G prim&G dual&G int&ADMM prim&Sinkhorn\\
   \hline
   \hline
-  \multirow{4}*{1}&dist&6.93e-4&6.93e-4&6.93e-4&6.93e-4&6.93e-4&6.93e-4\\
-  ~&time&9.50&10.0&11.9&15.6&11.3&1.73e+2\\
-  ~&err $\mu$&1.02e-4&1.59e-16&3.39e-12&0&0&0\\
-  ~&err $\nu$&1.02e-4&1.19e-9&1.20e-9&1.19e-9&1.19e-9&1.19e-9\\
+  \multirow{4}*{1}&dist&6.93e-4&6.93e-4&6.93e-4&6.93e-4&6.93e-4&6.93e-4&6.92e-4&6.62e-4\\
+  ~&time&9.50&10.0&11.9&15.6&11.3&1.73e+2&1.46e+3&1.49e+2\\
+  ~&err $\mu$&1.02e-4&1.59e-16&3.39e-12&0&0&0&1.01e-4&7.90e-3\\
+  ~&err $\nu$&1.02e-4&1.19e-9&1.20e-9&1.19e-9&1.19e-9&1.19e-9&1.01e-4&6.63e-17\\
   \hline
-  \multirow{4}*{2}&dist&1.44e-3&1.44e-3&1.44e-3&1.44e-3&1.44e-3&1.44e-3\\
-  ~&time&7.34&15.7&10.3&14.4&14.4&26.5\\
-  ~&err $\mu$&9.91e-5&1.10e-16&6.47e-13&0&0&2.58e-9\\
-  ~&err $\nu$&9.91e-5&2.58e-9&2.58e-9&2.58e-9&2.58e-9&0\\
+  \multirow{4}*{2}&dist&1.44e-3&1.44e-3&1.44e-3&1.44e-3&1.44e-3&1.44e-3&1.44e-3&1.27e-3\\
+  ~&time&7.34&15.7&10.3&14.4&14.4&26.5&1.59e+3&1.51e+2\\
+  ~&err $\mu$&9.91e-5&1.10e-16&6.47e-13&0&0&2.58e-9&1.72e-4&1.15e-2\\
+  ~&err $\nu$&9.91e-5&2.58e-9&2.58e-9&2.58e-9&2.58e-9&0&1.68e-4&1.29e-16\\
   \hline
-  \multirow{4}*{3}&dist&3.98e-3&3.98e-3&3.98e-3&3.98e-3&3.98e-3&3.98e-3\\
-  ~&time&5.55&20.4&10.5&13.64&13.2&\\
-  ~&err $\mu$&9.84e-5&1.89e-16&7.38e-14&0&5.70e-10&\\
-  ~&err $\nu$&9.84e-5&5.70e-10&5.70e-10&5.70e-10&0&\\
+  \multirow{4}*{3}&dist&3.98e-3&3.98e-3&3.98e-3&3.98e-3&3.98e-3&3.98e-3&3.98e-3&3.99e-3\\
+  ~&time&5.55&20.4&10.5&13.64&13.2&18.49&1.48e+3&1.52e+2\\
+  ~&err $\mu$&9.84e-5&1.89e-16&7.38e-14&0&5.70e-10&0&1.16e-4&1.12e-3\\
+  ~&err $\nu$&9.84e-5&5.70e-10&5.70e-10&5.70e-10&0&0&1.63e-4&1.82e-16\\
   \hline
-  \multirow{4}*{4}&dist&2.09e-2&2.09e-2&2.09e-2&2.09e-2&2.09e-2&2.09e-2\\
-  ~&time&5.56&31.8&9.55&13.9&15.9&22.1\\
-  ~&err $\mu$&9.78e-5&1.67e-16&9.80e-12&0&0&0\\
-  ~&err $\nu$&9.78e-5&9.89e-8&1.24e-9&1.23e-9&1.23e-9&1.23e-9\\
+  \multirow{4}*{4}&dist&2.09e-2&2.09e-2&2.09e-2&2.09e-2&2.09e-2&2.09e-2&2.09e-2&2.20e-2\\
+  ~&time&5.56&31.8&9.55&13.9&15.9&22.1&1.44e+3&1.25e+2\\
+  ~&err $\mu$&9.78e-5&1.67e-16&9.80e-12&0&0&0&1.65e-4&1.23e-9\\
+  ~&err $\nu$&9.78e-5&9.89e-8&1.24e-9&1.23e-9&1.23e-9&1.23e-9&1.63e-4&3.40e-16\\
   \hline
-  \multirow{4}*{5}&dist&1.87e-2&1.87e-2&1.87e-2&1.87e-2&1.87e-2&1.87e-2\\
-  ~&time&5.99&20.4&10.3&14.2&16.8&29.4\\  
-  ~&err $\mu$&1.00e-4&1.55e-16&2.93e-12&0&0&0\\   
-  ~&err $\nu$&1.00e-4&1.59e-9&1.59e-9&1.59e-9&8.56e-10&1.59e-9\\
+  \multirow{4}*{5}&dist&1.87e-2&1.87e-2&1.87e-2&1.87e-2&1.87e-2&1.87e-2&1.87e-2&1.97e-2\\
+  ~&time&5.99&20.4&10.3&14.2&16.8&29.4&1.54e+3&1.32e+2\\  
+  ~&err $\mu$&1.00e-4&1.55e-16&2.93e-12&0&0&0&1.16e-4&1.70e-9\\   
+  ~&err $\nu$&1.00e-4&1.59e-9&1.59e-9&1.59e-9&8.56e-10&1.59e-9&1.35e-4&3.07e-16\\
   \hline
-  \multirow{4}*{6}&dist&1.65e-2&1.65e-2&1.65e-2&1.65e-2&1.65e-2&1.65e-2\\
-   ~&time&6.43&18.1&13.7&13.4&16.8&19.1\\   
-   ~&err $\mu$&1.00e-4&1.80e-16&4.20e-10&0&0&0\\   
-   ~&err $\nu$&1.00e-4&8.56e-10&1.28e-9&1.16e-9&8.56e-10&8.56e-10\\
+  \multirow{4}*{6}&dist&1.65e-2&1.65e-2&1.65e-2&1.65e-2&1.65e-2&1.65e-2&1.65e-2&1.74e-2\\
+   ~&time&6.43&18.1&13.7&13.4&16.8&19.1&1.42e+3&1.31e+2\\   
+   ~&err $\mu$&1.00e-4&1.80e-16&4.20e-10&0&0&0&1.17e-4&4.11e-8\\   
+   ~&err $\nu$&1.00e-4&8.56e-10&1.28e-9&1.16e-9&8.56e-10&8.56e-10&1.20e-4&2.74e-16\\
   \hline
-  \multirow{4}*{7}&dist&1.71e-2&1.71e-2&1.71e-2&1.71e-2&1.71e-2&1.71e-2\\
-    ~&time&8.66&29.7&12.5&13.4&18.0&26.4\\   
-    ~&err $\mu$&1.09e-4&1.19e-16&4.09e-10&0&0&0\\   
-    ~&err $\nu$&1.09e-4&1.16e-9&1.57e-9&1.16e-9&1.16e-9&1.16e-9\\
+  \multirow{4}*{7}&dist&1.71e-2&1.71e-2&1.71e-2&1.71e-2&1.71e-2&1.71e&1.71e-2&1.80e-2\\
+    ~&time&8.66&29.7&12.5&13.4&18.0&26.4&1.54e+3&91.3\\   
+    ~&err $\mu$&1.09e-4&1.19e-16&4.09e-10&0&0&0&5.64e-4&1.16e-9\\   
+    ~&err $\nu$&1.09e-4&1.16e-9&1.57e-9&1.16e-9&1.16e-9&1.16e-9&4.35e-4&2.89e-16\\
   \hline
-  \multirow{4}*{8}&dist&2.38e-2&2.38e-2&2.38e-2&2.38e-2&2.38e-2&2.38e-2\\
-    ~&time&5.17&6.84&6.33&13.3&12.2&12.2\\   
-    ~&err $\mu$&6.52e-5&1.17e-16&4.72e-11&0&0&0\\   
-    ~&err $\nu$&6.53e-5&2.24e-8&2.25e-8&2.24e-8&2.24e-8&2.24e-8\\
+  \multirow{4}*{8}&dist&2.38e-2&2.38e-2&2.38e-2&2.38e-2&2.38e-2&2.38e-2&2.38e-2&2.50e-2\\
+    ~&time&5.17&6.84&6.33&13.3&12.2&12.2&1.56e+3&1.41e+2\\   
+    ~&err $\mu$&6.52e-5&1.17e-16&4.72e-11&0&0&0&8.20e-4&2.24e-8\\   
+    ~&err $\nu$&6.53e-5&2.24e-8&2.25e-8&2.24e-8&2.24e-8&2.24e-8&2.94e-4&4.48e-16\\
   \hline
-  \multirow{4}*{9}&dist&6.12e-3&6.12e-3&6.12e-3&6.12e-3&6.12e-3&6.12e-3\\
-    ~&time&5.71&17.56&12.9&15.1&13.2&18.4\\   
-    ~&err $\mu$&9.90e-5&1.61e-16&9.08e-13&0&2.18e-11&0\\   
-    ~&err $\nu$&9.90e-5&2.18e-11&2.26e-11&2.18e-11&0&2.18e-11\\
+  \multirow{4}*{9}&dist&6.12e-3&6.12e-3&6.12e-3&6.12e-3&6.12e-3&6.12e-3&6.13e-3&6.20e-3\\
+    ~&time&5.71&17.56&12.9&15.1&13.2&18.4&1.62e+3&1.51e+2\\   
+    ~&err $\mu$&9.90e-5&1.61e-16&9.08e-13&0&2.18e-11&0&1.16e-4&2.18e-11\\ 
+    ~&err $\nu$&9.90e-5&2.18e-11&2.26e-11&2.18e-11&0&2.18e-11&1.21e-4&5.55e-16\\
   \hline
-  \multirow{4}*{10}&dist&1.06e-2&1.06e-2&1.06e-2&1.06e-2&1.06e-2&1.06e-2\\
-    ~&time&4.20&7.32&6.00&12.8&13.9&20.9\\   
-    ~&err $\mu$&7.01e-5&1.16e-16&2.40e-11&0&0&5.94e-9\\   
-    ~&err $\nu$&7.01e-5&5.94e-9&5.95e-9&5.94e-9&5.94e-9&0\\
+  \multirow{4}*{10}&dist&1.06e-2&1.06e-2&1.06e-2&1.06e-2&1.06e-2&1.06e-2&1.06e-2&1.09e-2\\
+    ~&time&4.20&7.32&6.00&12.8&13.9&20.9&1.71e+3&1.51e+2\\   
+    ~&err $\mu$&7.01e-5&1.16e-16&2.40e-11&0&0&5.94e-9&1.20e-4&1.23e-6\\   
+    ~&err $\nu$&7.01e-5&5.94e-9&5.95e-9&5.94e-9&5.94e-9&0&1.76e-4&2.24e-16\\
   \hline
   \end{tabular}
-  \caption{\label{tab:table1}The 10 classes in the DOTmark}
+  \caption{\label{tab:table1}Numerical result of 10 classes in the DOTmark}
 \end{table}
+
 \subsection*{Acknowledgments}
 
 Use unnumbered third level headings for the acknowledgments. All
@@ -538,29 +640,16 @@ acknowledgments go at the end of the paper. Do not include
 acknowledgments in the anonymized submission, only in the final paper.
 
 \section*{References}
-
-References follow the acknowledgments. Use unnumbered first-level
-heading for the references. Any choice of citation style is acceptable
-as long as you are consistent. It is permissible to reduce the font
-size to \verb+small+ (9 point) when listing the references. {\bf
-  Remember that you can go over 8 pages as long as the subsequent ones contain
-  \emph{only} cited references.}
 \medskip
-
 \small
 
-[1] Alexander, J.A.\ \& Mozer, M.C.\ (1995) Template-based algorithms
-for connectionist rule extraction. In G.\ Tesauro, D.S.\ Touretzky and
-T.K.\ Leen (eds.), {\it Advances in Neural Information Processing
-  Systems 7}, pp.\ 609--616. Cambridge, MA: MIT Press.
+[1] Karlsson, J., \& Ringh, A. (2017). Generalized Sinkhorn iterations for regularizing inverse problems using optimal mass transport. SIAM Journal on Imaging Sciences, 10(4), 1935-1962.
 
-[2] Bower, J.M.\ \& Beeman, D.\ (1995) {\it The Book of GENESIS:
-  Exploring Realistic Neural Models with the GEneral NEural SImulation
-  System.}  New York: TELOS/Springer--Verlag.
+[2] Peyré, G. (2015). Entropic approximation of Wasserstein gradient flows. SIAM Journal on Imaging Sciences, 8(4), 2323-2351.
 
-[3] Hasselmo, M.E., Schnell, E.\ \& Barkai, E.\ (1995) Dynamics of
-learning and recall at excitatory recurrent synapses and cholinergic
-modulation in rat hippocampal region CA3. {\it Journal of
-  Neuroscience} {\bf 15}(7):5249-5262.
+[3] Frogner, C., Zhang, C., Mobahi, H., Araya, M., \& Poggio, T. A. (2015). Learning with a Wasserstein loss. In Advances in Neural Information Processing Systems (pp. 2053-2061).
 
+[4] Chizat, L., Peyré, G., Schmitzer, B., \& Vialard, F. X. (2016). Scaling algorithms for unbalanced transport problems. arXiv preprint arXiv:1607.05816.
+ 
+ [5] L. Ambrosio. Lecture notes on optimal transport problems. In Mathematical Aspects of Evolving Interfaces, volume 1812 of Lecture Notes in Mathematics, pages 1–52. Springer, 2003
 \end{document}
